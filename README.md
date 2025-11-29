@@ -92,9 +92,3 @@ model • service • repository • controller • routes
 
 ## 📜 License
 MIT License – free to use, modify, and learn from.
-
----
-
-## 👤 Author
-45x45 – Full‑stack developer • Node.js • Vue.js • System architecture
-

@@ -1,0 +1,125 @@
+# ----------------------------------------------------
+# Global Node.js / Express / Vite / Vue / MongoDB 
+# ----------------------------------------------------
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Vite / Vue build outputs
+dist/
+build/
+*.local
+
+# Cache
+.cache/
+.vite/
+vite.config.ts.timestamp*
+vite.config.js.timestamp*
+.eslintcache
+.cache-loader
+.nyc_output
+.happypack
+webpack-cache/
+vite-cache/
+.tmp/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Bundler outputs
+coverage/
+*.lcov
+
+# Local test results
+test-output/
+playwright-report/
+test-results/
+
+# PM2 process logs
+.pids
+*.pid
+*.seed
+*.log.old
+
+# ----------------------------------------------------
+# Editor / OS
+# ----------------------------------------------------
+
+# VSCode
+.vscode/
+.history/
+
+# JetBrains IDE
+.idea/
+*.iml
+out/
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ----------------------------------------------------
+# MongoDB
+# ----------------------------------------------------
+dump/
+*.bson
+*.metadata.json
+*.wt
+*.ns
+
+# MongoDB data directories
+data/
+mongodb-data/
+mongo-data/
+db/
+
+# ----------------------------------------------------
+# Docker
+# ----------------------------------------------------
+docker-data/
+docker-compose.override.yml
+*.swp
+
+# ----------------------------------------------------
+# Frontend Vue 3 (Vite)
+# ----------------------------------------------------
+# local debug
+*.temp
+*.tmp
+temp/
+tmp/
+
+# Cypress / Testing libs
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# ----------------------------------------------------
+# Misc
+# ----------------------------------------------------
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local file storage
+uploads/
+storage/
+p

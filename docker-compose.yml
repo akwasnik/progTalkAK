@@ -11,7 +11,7 @@ services:
       - "3000:3000"
     environment:
       MONGO_URI: mongodb://mongo:27017/progtalk
-      NODE_ENV: development
+      NODE_ENV: production
     depends_on:
       - mongo
     networks:

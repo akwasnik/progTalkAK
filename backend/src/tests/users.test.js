@@ -19,12 +19,12 @@ const userRepository = require(path.join(SRC,"modules","users","user.repository"
 
 // Middleware mock
 jest.mock("../common/middleware/authRequired", () => (req, _res, next) => {
-    req.user = { id: "123", isAdmin: false };
+    req.user = { id: "123", isAdmin: false, isAllowed: true };
     next();
 });
 
 jest.mock("../common/middleware/adminRequired", () => (req, _res, next) => {
-    req.user = { id: "999", isAdmin: true };
+    req.user = { id: "999", isAdmin: true, isAllowed: true };
     next();
 });
 
@@ -75,18 +75,19 @@ describe("User Module", () => {
     // -----------------------------------
     // UPDATE
     // -----------------------------------
-    test("PATCH /api/users/:id — should update user", async () => {
+    test("PATCH /api/users/:id — should update password", async () => {
         userRepository.updateUser.mockResolvedValue({
             login: "testuser",
-            isAllowed: false
+            password: "newpass123"  // mock
         });
 
         const res = await request(app)
             .patch("/api/users/123")
-            .send({ isAllowed: false });
+            .send({ password: "newpass123" });
 
         expect(res.status).toBe(200);
-        expect(res.body.isAllowed).toBe(false);
+        expect(res.body.password).toBe("newpass123");
+        expect(userRepository.updateUser).toHaveBeenCalledWith("123", { password: "newpass123" });
     });
 
     // -----------------------------------

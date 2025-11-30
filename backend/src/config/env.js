@@ -3,7 +3,7 @@ require('dotenv').config({
 });
 
 module.exports = {
-    PORT: process.env.PORT || 3000,
-    API_HOST: process.env.API_HOST || 'localhost',
-    SECRET: process.env.SECRET || "$zyfr $zyfrujac7"
+    PORT: process.env.PORT,
+    API_HOST: process.env.API_HOST,
+    SECRET: process.env.SECRET
 };

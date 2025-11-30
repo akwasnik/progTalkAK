@@ -3,7 +3,7 @@ require('dotenv').config({
 });
 
 module.exports = {
-    DB_HOST: process.env.DB_HOST || 'progtalk-mongo',
-    DB_PORT: process.env.DB_PORT || 27017,
-    DB_NAME: process.env.DB_NAME || 'progtalk',
+    DB_HOST: process.env.DB_HOST,
+    DB_PORT: process.env.DB_PORT,
+    DB_NAME: process.env.DB_NAME,
 };

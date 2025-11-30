@@ -5,5 +5,6 @@ require('dotenv').config({
 module.exports = {
     PORT: process.env.PORT,
     API_HOST: process.env.API_HOST,
-    SECRET: process.env.SECRET
+    SECRET: process.env.SECRET,
+    FRONTEND_URL: process.env.FRONTEND_URL
 };

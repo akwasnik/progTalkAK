@@ -2,7 +2,7 @@
   "name": "progtalk-backend",
   "version": "1.0.0",
   "description": "Backend platformy ProgTalk 2025/2026 – Express 5, Passport-JWT, Socket.io, MongoDB, highlight.js",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "license": "MIT",
   "engines": {
@@ -12,26 +12,26 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix"
+    "test": "jest --watchAll=false"
   },
   "dependencies": {
-    "cookie-parser": "^1.4.6",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
+    "eslint": "^9.39.1",
     "express": "5.1.0",
-    "highlight.js": "^11.9.0",
+    "highlight.js": "^11.11.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.3",
+    "mongoose": "^9.0.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-promise": "^6.1.1",
-    "nodemon": "^3.1.0"
+    "@eslint/js": "^9.39.1",
+    "globals": "^16.5.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.1.4"
   }
 }

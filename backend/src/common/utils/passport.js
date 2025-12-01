@@ -6,7 +6,7 @@ const conf = require(path.join(SRC, 'config',));
 
 module.exports = (passport) => {
     const opts = {
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // potem inne
         secretOrKey: conf.SECRET
     };
 

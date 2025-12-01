@@ -9,12 +9,9 @@ const adminRequired = require(path.join(SRC,"common","middleware","adminRequired
 
 const router = Router();
 
-// ------- PUBLIC -------
-router.post("/register", userController.register);
-
 // ------- AUTH REQUIRED -------
 router.get("/:id", authRequired, userController.getProfile);
-router.patch("/:id", authRequired, userController.updateUser);
+router.patch("/:id/password", authRequired, userController.updatePassword);
 
 // ------- ADMIN -------
 router.patch("/:id/make-admin", adminRequired, userController.makeAdmin);

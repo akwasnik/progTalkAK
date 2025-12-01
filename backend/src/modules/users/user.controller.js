@@ -22,9 +22,9 @@ class UserController {
         }
     }
 
-    async updateUser(req, res, next) {
+    async updatePassword(req, res, next) {
         try {
-            const updated = await userService.updateUser(req.params.id, req.body);
+            const updated = await userService.updatePassword(req.params.id, req.body.newPassword);
             res.json(updated);
         } catch (err) {
             next(err);

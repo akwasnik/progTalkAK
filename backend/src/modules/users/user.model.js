@@ -6,10 +6,10 @@ const userSchema = new Schema({
         unique: true,
         required: true
     },
-    password: { type: String, required: true },
-    registrationDate: Date,
-    isAdmin: Boolean,
-    isAllowed: Boolean,
+    passwordHashed: { type: String, required: true },
+    registrationDate: { type: Date, required: true },
+    isAdmin: { type: Boolean, required: true },
+    isAllowed: { type: Boolean, required: true },
 });
 
 module.exports = model('User', userSchema);

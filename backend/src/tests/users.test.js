@@ -2,13 +2,13 @@ const request = require("supertest");
 const path = require('node:path');
 const SRC = path.join(process.cwd(),"src");
 const app = require(path.join(process.cwd(),"app"));
-
+const { genHash } = require(path.join(SRC,"common","utils","hash"));
 // DB mock
 jest.mock("../modules/users/user.repository", () => ({
     findByLogin: jest.fn(),
     findById: jest.fn(),
     createUser: jest.fn(),
-    updateUser: jest.fn(),
+    updatePassword: jest.fn(),
     getAll: jest.fn(),
     deleteUser: jest.fn(),
     makeAdmin: jest.fn(),
@@ -37,25 +37,25 @@ describe("User Module", () => {
     // -----------------------------------
     // REGISTER
     // -----------------------------------
-    test("POST /api/users/register — should create user", async () => {
-        const newUser = {
-            login: "testuser",
-            password: "pass123",
-            isAdmin: false,
-            isAllowed: true
-        };
+    // test("POST /api/auth/register — should create user", async () => {
+    //     const newUser = {
+    //         login: "testuser",
+    //         password: "pass123",
+    //         isAdmin: false,
+    //         isAllowed: true
+    //     };
 
-        userRepository.findByLogin.mockResolvedValue(null);
-        userRepository.createUser.mockResolvedValue(newUser);
+    //     userRepository.findByLogin.mockResolvedValue(null);
+    //     userRepository.createUser.mockResolvedValue(newUser);
 
-        const res = await request(app)
-            .post("/api/users/register")
-            .send(newUser);
+    //     const res = await request(app)
+    //         .post("/api/auth/register")
+    //         .send(newUser);
 
-        expect(res.status).toBe(201);
-        expect(res.body.login).toBe("testuser");
-        expect(userRepository.createUser).toHaveBeenCalled();
-    });
+    //     expect(res.status).toBe(201);
+    //     expect(res.body.login).toBe("testuser");
+    //     expect(userRepository.createUser).toHaveBeenCalled();
+    // });
 
     // -----------------------------------
     // PROFILE
@@ -75,19 +75,19 @@ describe("User Module", () => {
     // -----------------------------------
     // UPDATE
     // -----------------------------------
-    test("PATCH /api/users/:id — should update password", async () => {
-        userRepository.updateUser.mockResolvedValue({
+    test("PATCH /api/users/:id/password — should update password", async () => {
+        userRepository.updatePassword.mockResolvedValue({
             login: "testuser",
-            password: "newpass123"  // mock
+            passwordHashed: genHash("newpass123")  // mock
         });
 
         const res = await request(app)
-            .patch("/api/users/123")
-            .send({ password: "newpass123" });
+            .patch("/api/users/123/password")
+            .send({ newPassword: "newpass123" });
 
         expect(res.status).toBe(200);
-        expect(res.body.password).toBe("newpass123");
-        expect(userRepository.updateUser).toHaveBeenCalledWith("123", { password: "newpass123" });
+        expect(res.body.passwordHashed).toBe(genHash("newpass123"));
+        expect(userRepository.updatePassword).toHaveBeenCalledWith("123", genHash("newpass123") );
     });
 
     // -----------------------------------

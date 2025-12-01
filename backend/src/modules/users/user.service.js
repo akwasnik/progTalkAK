@@ -2,36 +2,28 @@ const path = require('node:path');
 const SRC = path.join(process.cwd(),"src");
 const userRepository = require(path.join(SRC,"modules","users","user.repository"));
 const ApiError = require(path.join(SRC,"common","errors","ApiError"));
+const { genHash } = require(path.join(SRC,"common","utils","hash"));
 
 class UserService {
-
-    async register(data) {
-        const existing = await userRepository.findByLogin(data.login);
-        if (existing) {
-            throw ApiError.badRequest("Login already taken");
-        }
-
-        const user = await userRepository.createUser({
-            ...data,
-            registrationDate: new Date(),
-            isAdmin: false,
-            isAllowed: false
-        });
-
-        return user;
-    }
-
     async getProfile(id) {
         const user = await userRepository.findById(id);
         if (!user) throw ApiError.notFound("User not found");
         return user;
     }
 
-    async updateUser(id, data) {
-        const user = await userRepository.updateUser(id, data);
+    async updatePassword(id, newPassword) {
+        if (!newPassword || typeof newPassword !== "string" || newPassword.length < 6) {
+            throw ApiError.badRequest("New password is invalid");
+        }
 
-        if (!user) throw ApiError.notFound("User not found");
-        return user;
+        const passwordHashed = genHash(newPassword);
+
+        const updated = await userRepository.updatePassword(id, passwordHashed);
+        if (!updated) {
+            throw ApiError.notFound("User not found");
+        }
+
+        return updated;
     }
 
     async listAll() {

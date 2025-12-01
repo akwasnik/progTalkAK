@@ -17,8 +17,8 @@ class UserRepository {
         return user.save();
     }
 
-    async updateUser(id, data) {
-        return User.findByIdAndUpdate(id, data, { new: true });
+    async updatePassword(id, passwordHashed) {
+        return User.findByIdAndUpdate(id, { passwordHashed }, { new: true });
     }
 
     async getAll() {

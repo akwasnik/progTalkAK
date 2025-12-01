@@ -11,8 +11,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// USER
 const userRoutes = require(path.join(SRC,"modules","users","user.routes"))
 app.use("/api/users", userRoutes);
+
+
+// AUTH
+const passport = require("passport");
+const passportConfig = require(path.join(SRC,"common","utils","passport"));
+
+passportConfig(passport);
+
+app.use(passport.initialize());
+
+const authRoutes = require(path.join(SRC,"modules","auth","auth.routes"))
+app.use("/api/auth", authRoutes);
 
 
 module.exports = app;

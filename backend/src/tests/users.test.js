@@ -35,29 +35,6 @@ describe("User Module", () => {
     });
 
     // -----------------------------------
-    // REGISTER
-    // -----------------------------------
-    // test("POST /api/auth/register — should create user", async () => {
-    //     const newUser = {
-    //         login: "testuser",
-    //         password: "pass123",
-    //         isAdmin: false,
-    //         isAllowed: true
-    //     };
-
-    //     userRepository.findByLogin.mockResolvedValue(null);
-    //     userRepository.createUser.mockResolvedValue(newUser);
-
-    //     const res = await request(app)
-    //         .post("/api/auth/register")
-    //         .send(newUser);
-
-    //     expect(res.status).toBe(201);
-    //     expect(res.body.login).toBe("testuser");
-    //     expect(userRepository.createUser).toHaveBeenCalled();
-    // });
-
-    // -----------------------------------
     // PROFILE
     // -----------------------------------
     test("GET /api/users/:id — should return user", async () => {

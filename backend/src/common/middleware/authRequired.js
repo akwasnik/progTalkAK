@@ -1,5 +1,9 @@
+const path = require('node:path');
+const SRC = path.join(process.cwd(),"src");
+const ApiError = require(path.join(SRC,"common","errors","ApiError"));
+
 const passport = require("passport");
-const ApiError = require("../errors/ApiError");
+
 
 module.exports = (req, res, next) => {
     passport.authenticate("jwt", { session: false }, (err, user) => {

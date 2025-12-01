@@ -4,6 +4,7 @@ const globals = require('globals');
 module.exports = [
   {
     files: ["**/*.js"],
+    ignores: ["**/*.test.js"],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "commonjs",

@@ -29,7 +29,8 @@ class AuthController {
             const { token, user } = await authService.login(login, password);
             res.cookie("token", token, {
                 httpOnly: true,
-                sameSite: "lax",
+                secure: true,
+                sameSite: "none",
                 maxAge: 24 * 60 * 60 * 1000 // 24h
             })
             .status(200)

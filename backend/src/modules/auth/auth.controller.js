@@ -5,6 +5,15 @@ const authService = require(path.join(SRC,"modules","auth","auth.service"));
 
 class AuthController {
 
+    async me(req, res) {
+        res.json({
+            id: req.user._id,
+            login: req.user.login,
+            isAdmin: req.user.isAdmin,
+            isAllowed: req.user.isAllowed
+        });
+    }
+
     async register(req, res, next) {
         try {
             const user = await authService.register(req.body);
@@ -17,13 +26,22 @@ class AuthController {
     async login(req, res, next) {
         try {
             const { login, password } = req.body;
-            const data = await authService.login(login, password);
-            res.json(data);
-            // .cookie("token", data.token, {
-            //     httpOnly: true,
-            //     sameSite: "lax",
-            //     maxAge: 24 * 60 * 60 * 1000,
-            // });
+            const { token, user } = await authService.login(login, password);
+            res.cookie("token", token, {
+                httpOnly: true,
+                sameSite: "lax",
+                maxAge: 24 * 60 * 60 * 1000 // 24h
+            })
+            .status(200)
+            .json({
+                user: {
+                    id: user._id,
+                    login: user.login,
+                    isAdmin: user.isAdmin,
+                    isAllowed: user.isAllowed
+                }
+            });
+            
         } catch (err) {
             next(err);
         }
@@ -31,8 +49,8 @@ class AuthController {
 
     async logout(_req,res,next){
         try {
-            res.json({msg: "logged out"}); // TO DO
-            // .clearCookie("token")
+            res.clearCookie("token")
+            .json({ msg: "logged out" });
         } catch (err) {
             next(err);
         }

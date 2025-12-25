@@ -1,12 +1,14 @@
-const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
-const path = require('node:path');
-const SRC = path.join(process.cwd(),"src");
+const { Strategy: JwtStrategy } = require("passport-jwt");
+const path = require("node:path");
+const SRC = path.join(process.cwd(), "src");
+
 const userRepository = require(path.join(SRC,"modules","users","user.repository"));
-const conf = require(path.join(SRC, 'config',));
+const conf = require(path.join(SRC, "config"));
+const cookieExtractor = require(path.join(SRC,"common","utils","jwtCookieExtractor"));
 
 module.exports = (passport) => {
     const opts = {
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // potem inne
+        jwtFromRequest: cookieExtractor,
         secretOrKey: conf.SECRET
     };
 

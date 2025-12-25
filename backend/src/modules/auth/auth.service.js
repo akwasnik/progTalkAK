@@ -50,8 +50,6 @@ class AuthService {
         const match = cmpHash(password,user.passwordHashed)
         if (!match) throw ApiError.unauthorized("Invalid credentials");
 
-        if (!user.isAllowed) throw ApiError.forbidden("User is blocked");
-
         const token = jwt.sign(
             { id: user._id },
             conf.SECRET,

@@ -5,6 +5,7 @@ import Home from "@/views/Home.vue";
 import NotAllowed from "@/views/NotAllowed.vue";
 import Register from "@/views/Register.vue";
 import AdminDashboard from "@/views/AdminDashboard.vue";
+import Profile from "@/views/Profile.vue";
 
 import { auth } from "@/store/auth";
 
@@ -28,6 +29,11 @@ const routes = [
     path: "/",
     name: "home",
     component: Home
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: Profile
   },
   {
     path: "/admin",

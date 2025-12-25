@@ -11,14 +11,28 @@ class UserService {
         return user;
     }
 
-    async updatePassword(id, newPassword) {
+    async updatePassword(currentUser, targetUserId, newPassword) {
+        if (!(currentUser.isAdmin || currentUser._id.toString() === targetUserId)) {
+            throw ApiError.forbidden("You can update only your own password");
+        }
+
         if (!newPassword || typeof newPassword !== "string" || newPassword.length < 6) {
             throw ApiError.badRequest("New password is invalid");
         }
 
         const passwordHashed = genHash(newPassword);
 
-        const updated = await userRepository.updatePassword(id, passwordHashed);
+        const oldPassword = await currentUser.passwordHashed;
+
+        if (passwordHashed === oldPassword ){
+            throw ApiError.badRequest("New password is the same as old one");
+        }
+
+        const updated = await userRepository.updatePassword(
+            targetUserId,
+            passwordHashed
+        );
+
         if (!updated) {
             throw ApiError.notFound("User not found");
         }

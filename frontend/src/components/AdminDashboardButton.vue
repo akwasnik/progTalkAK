@@ -1,5 +1,5 @@
 <template>
-  <button
+  <button class="btn"
     v-if="isAdmin"
     @click="goToAdmin"
   >
@@ -23,3 +23,10 @@ const goToAdmin = () => {
   router.push("/admin");
 };
 </script>
+
+
+<style scoped>
+button {
+  white-space: nowrap;
+}
+</style>

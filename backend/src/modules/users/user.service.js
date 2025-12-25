@@ -3,6 +3,7 @@ const SRC = path.join(process.cwd(),"src");
 const userRepository = require(path.join(SRC,"modules","users","user.repository"));
 const ApiError = require(path.join(SRC,"common","errors","ApiError"));
 const { genHash } = require(path.join(SRC,"common","utils","hash"));
+const {emitToAdmins} = require(path.join(SRC,"sockets","socket"))
 
 class UserService {
     async getProfile(id) {
@@ -68,6 +69,9 @@ class UserService {
     async setAllowed(id, isAllowed) {
         const user = await userRepository.allowUser(id, isAllowed);
         if (!user) throw ApiError.notFound("User not found");
+        emitToAdmins("user-approved", {
+            message: (isAllowed) ? `User ${user.login} has been approved` : `User ${user.login} has been disapproved`
+        });
         return user;
     }
 

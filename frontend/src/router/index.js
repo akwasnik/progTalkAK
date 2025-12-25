@@ -75,7 +75,7 @@ router.beforeEach(async (to) => {
     return "/";
   }
 
-  if (auth.user && isPublic) {
+  if (auth.user && (isPublic || to.path === "/not-allowed")) {
     return "/";
   }
 

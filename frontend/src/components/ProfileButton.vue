@@ -1,5 +1,5 @@
 <template>
-  <button
+  <button class="btn"
     v-if="isAllowed"
     @click="goToProfile"
   >
@@ -23,3 +23,15 @@ const goToProfile = () => {
   router.push("/profile");
 };
 </script>
+
+<style scoped>
+button {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  button {
+    margin-left: 0;
+  }
+}
+</style>

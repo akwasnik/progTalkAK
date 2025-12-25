@@ -27,8 +27,7 @@ class AuthService {
         });
         
         emitToAdmins("user-awaiting-approval", {
-            login: user.login,
-            userId: user._id
+            message: `User ${user.login} is awaiting approval` 
         });
 
         return user;

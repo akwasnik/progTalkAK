@@ -1,5 +1,5 @@
 <template>
-  <button @click="handleLogout">
+  <button class="btn btn-danger" @click="handleLogout">
     Wyloguj się
   </button>
 </template>
@@ -24,7 +24,12 @@ const handleLogout = async () => {
 
 <style scoped>
 button {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  button {
+    margin-left: 0;
+  }
 }
 </style>

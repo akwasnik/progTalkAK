@@ -32,6 +32,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { login } from "@/services/auth";
+import { auth } from "@/store/auth";
 
 const router = useRouter();
 
@@ -41,6 +42,7 @@ const password = ref("");
 const handleLogin = async () => {
   try {
     await login(loginValue.value, password.value);
+    await auth.init();
     router.push("/");
   } catch (err) {
     console.error("Login failed", err);

@@ -25,10 +25,20 @@ class UserRepository {
         return User.find();
     }
 
-    async makeAdmin(id) {
+    async getNotAllowed() {
+        return User.find({ isAllowed: false });
+    }
+
+    async getAdmins() {
+        return User.find({ isAdmin: true });
+    }
+
+
+
+    async makeAdmin(id, isAdmin) {
         return User.findByIdAndUpdate(
             id,
-            { isAdmin: true }, // -||-
+            { isAdmin }, // -||-
             { new: true } // -||-
         );
     }

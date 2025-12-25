@@ -29,15 +29,30 @@ class UserService {
     async listAll() {
         return userRepository.getAll();
     }
+
+    async getNotAllowed() {
+        const users = await userRepository.getNotAllowed();
+
+        if (!users || users.length === 0) {
+            throw ApiError.notFound("No users awaiting approval");
+        }
+
+        return users;
+    }
+
+    async getAdmins() {
+        return userRepository.getAdmins();
+    }
+
     
-    async makeAdmin(id) {
-        const user = await userRepository.makeAdmin(id);
+    async makeAdmin(id, isAdmin) {
+        const user = await userRepository.makeAdmin(id,isAdmin);
         if (!user) throw ApiError.notFound("User not found");
         return user;
     }
 
     async setAllowed(id, isAllowed) {
-        const user = await userRepository.setAllowed(id, isAllowed);
+        const user = await userRepository.allowUser(id, isAllowed);
         if (!user) throw ApiError.notFound("User not found");
         return user;
     }

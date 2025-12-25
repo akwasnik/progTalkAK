@@ -41,9 +41,28 @@ class UserController {
         }
     }
 
+    async getNotAllowed(_req, res, next) {
+        try {
+            const users = await userService.getNotAllowed();
+            res.json(users);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getAdmins(_req, res, next) {
+        try {
+            const admins = await userService.getAdmins();
+            res.json(admins);
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async makeAdmin(req, res, next) {
         try {
-            const user = await userService.makeAdmin(req.params.id);
+            const { admin } = req.body;
+            const user = await userService.makeAdmin(req.params.id, admin);
             res.json(user);
         } catch (err) {
             next(err);

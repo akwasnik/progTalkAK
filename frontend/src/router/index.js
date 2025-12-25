@@ -4,6 +4,7 @@ import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
 import NotAllowed from "@/views/NotAllowed.vue";
 import Register from "@/views/Register.vue";
+import AdminDashboard from "@/views/AdminDashboard.vue";
 
 import { auth } from "@/store/auth";
 
@@ -27,6 +28,11 @@ const routes = [
     path: "/",
     name: "home",
     component: Home
+  },
+  {
+    path: "/admin",
+    name: "admin",
+    component: AdminDashboard
   }
 ];
 
@@ -41,20 +47,33 @@ router.beforeEach(async (to) => {
   if (auth.loading) {
     await auth.init();
   }
-
+  
   const isPublic = ["/login", "/register"].includes(to.path);
 
-  if (!auth.user && !isPublic) {
+  // niezalogowany
+  if (!auth.user) {
+    if (isPublic) return true;
     return "/login";
   }
-
-  if (auth.user && !auth.user.isAllowed && to.path !== "/not-allowed") {
+  
+  // zalogowany, ale NIE allowed
+  if (!auth.user.isAllowed) {
+    if (to.path === "/not-allowed") return true;
     return "/not-allowed";
   }
 
-  if (auth.user && auth.user.isAllowed && isPublic) {
-    return "/home";
+  // zalogowany i allowed
+  if (auth.user.isAllowed) {
+    if (to.path === "/not-allowed") return "/";
+    if (isPublic) return "/";
   }
+
+  // dostep do dashboard tylko jezeli jestesmy adminem
+  if (auth.user && !auth.user.isAdmin && to.path === "/admin") {
+    return "/";
+  }
+
+  return true;
 });
 
 export default router;

@@ -33,8 +33,6 @@ class UserRepository {
         return User.find({ isAdmin: true });
     }
 
-
-
     async makeAdmin(id, isAdmin) {
         return User.findByIdAndUpdate(
             id,

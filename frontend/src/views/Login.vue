@@ -5,7 +5,8 @@
     <form @submit.prevent="handleLogin">
       <input
         v-model="loginValue"
-        placeholder="Login"
+        placeholder="Email"
+        type="email"
         required
       />
 
@@ -15,6 +16,8 @@
         placeholder="Password"
         required
       />
+
+      <p v-if="error" class="error">{{ error }}</p>
 
       <button type="submit">
         Zaloguj się
@@ -38,14 +41,30 @@ const router = useRouter();
 
 const loginValue = ref("");
 const password = ref("");
+const error = ref("");
+
+const isEmail = (val) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
 
 const handleLogin = async () => {
+  error.value = "";
+
+  if (!isEmail(loginValue.value)) {
+    error.value = "Login musi być poprawnym adresem email";
+    return;
+  }
+
+  if (password.value.length < 6) {
+    error.value = "Hasło musi mieć co najmniej 6 znaków";
+    return;
+  }
+
   try {
     await login(loginValue.value, password.value);
     await auth.init();
     router.push("/");
-  } catch (err) {
-    console.error("Login failed", err);
+  } catch {
+    error.value = "Nieprawidłowy login lub hasło";
   }
 };
 </script>
@@ -55,7 +74,8 @@ const handleLogin = async () => {
   padding: 2rem;
 }
 
-.register-link {
-  margin-top: 1rem;
+.error {
+  color: red;
+  margin: 0.5rem 0;
 }
 </style>

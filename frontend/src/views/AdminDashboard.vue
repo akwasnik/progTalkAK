@@ -11,13 +11,18 @@
 
     <!-- USERS LIST -->
     <ul v-if="users.length">
-      <li v-for="u in users" :key="u._id" style="margin-bottom: 8px;">
+      <li
+        v-for="u in users"
+        :key="u._id"
+        style="margin-bottom: 8px;"
+      >
         <strong>{{ u.login }}</strong>
 
         <!-- ADMIN -->
         <button
           @click="toggleAdmin(u)"
           :style="{ color: u.isAdmin ? 'green' : 'red', marginLeft: '10px' }"
+          :disabled="!u.isAllowed"
         >
           ADMIN
         </button>
@@ -32,6 +37,8 @@
       </li>
     </ul>
 
+    <!-- INFO / EMPTY STATES -->
+    <p v-else-if="infoMessage">{{ infoMessage }}</p>
     <p v-else>Brak użytkowników</p>
   </div>
 </template>
@@ -47,32 +54,45 @@ import {
 } from "@/services/users";
 
 const users = ref([]);
+const infoMessage = ref("");
 const currentLoader = ref(fetchAllUsers);
 
 // loaders
 const loadAll = async () => {
   currentLoader.value = fetchAllUsers;
+  infoMessage.value = "";
   users.value = await fetchAllUsers();
 };
 
 const loadAdmins = async () => {
   currentLoader.value = fetchAdmins;
+  infoMessage.value = "";
   users.value = await fetchAdmins();
 };
 
 const loadNotAllowed = async () => {
   currentLoader.value = fetchNotAllowed;
-  users.value = await fetchNotAllowed();
+  infoMessage.value = "";
+  try {
+    users.value = await fetchNotAllowed();
+  } catch (err) {
+    if (err.response?.status === 404) {
+      users.value = [];
+      infoMessage.value = "Brak użytkowników do zatwierdzenia";
+    } else {
+      throw err;
+    }
+  }
 };
 
 // actions
 const toggleAdmin = async (user) => {
+  if (!user.isAllowed) return;
   await setAdmin(user._id, !user.isAdmin);
   users.value = await currentLoader.value();
 };
 
 const toggleAllowed = async (user) => {
-    console.log(user);
   await setAllowed(user._id, !user.isAllowed);
   users.value = await currentLoader.value();
 };

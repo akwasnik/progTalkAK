@@ -34,9 +34,7 @@ describe("User Module", () => {
         jest.clearAllMocks();
     });
 
-    // -----------------------------------
     // PROFILE
-    // -----------------------------------
     test("GET /api/users/:id — should return user", async () => {
         userRepository.findById.mockResolvedValue({
             login: "testuser",
@@ -49,9 +47,7 @@ describe("User Module", () => {
         expect(res.body.login).toBe("testuser");
     });
 
-    // -----------------------------------
     // UPDATE
-    // -----------------------------------
     test("PATCH /api/users/:id/password — should update password", async () => {
         userRepository.updatePassword.mockResolvedValue({
             login: "testuser",
@@ -67,9 +63,7 @@ describe("User Module", () => {
         expect(userRepository.updatePassword).toHaveBeenCalledWith("123", genHash("newpass123") );
     });
 
-    // -----------------------------------
     // ADMIN — MAKE ADMIN
-    // -----------------------------------
     test("PATCH /api/users/:id/make-admin — admin makes admina", async () => {
         userRepository.makeAdmin.mockResolvedValue({
             login: "testuser",
@@ -83,9 +77,7 @@ describe("User Module", () => {
         expect(res.body.isAdmin).toBe(true);
     });
 
-    // -----------------------------------
     // ADMIN — ALLOW / BLOCK
-    // -----------------------------------
     test("PATCH /api/users/:id/allow — allow / block user", async () => {
         userRepository.setAllowed.mockResolvedValue({
             login: "testuser",
@@ -100,9 +92,7 @@ describe("User Module", () => {
         expect(res.body.isAllowed).toBe(false);
     });
 
-    // -----------------------------------
     // DELETE USER
-    // -----------------------------------
     test("DELETE /api/users/:id — admin delets user", async () => {
         userRepository.deleteUser.mockResolvedValue(true);
 
@@ -111,9 +101,7 @@ describe("User Module", () => {
         expect(res.status).toBe(204);
     });
 
-    // -----------------------------------
     // GET ALL (ADMIN)
-    // -----------------------------------
     test("GET /api/users — admin gets all users", async () => {
         userRepository.getAll.mockResolvedValue([
             { login: "testuser" },

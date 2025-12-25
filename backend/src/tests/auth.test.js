@@ -21,9 +21,7 @@ describe("AUTH MODULE", () => {
 
     beforeEach(() => jest.clearAllMocks());
 
-    // =========================
     // REGISTER
-    // =========================
     test("POST /api/auth/register — should register new user", async () => {
         const newUser = { login: "testuser", password: "123" };
 
@@ -44,9 +42,7 @@ describe("AUTH MODULE", () => {
         expect(userRepository.createUser).toHaveBeenCalled();
     });
 
-    // =========================
     // LOGIN
-    // =========================
 
     test("POST /api/auth/login — valid credentials return token", async () => {
 
@@ -98,9 +94,7 @@ describe("AUTH MODULE", () => {
         expect(res.status).toBe(403);
     });
 
-    // =========================
     // AUTH REQUIRED
-    // =========================
 
     test("authRequired — no token → 401", async () => {
         const res = await request(app)
@@ -125,9 +119,7 @@ describe("AUTH MODULE", () => {
         expect(res.status).toBe(200);
     });
 
-    // =========================
     // ADMIN REQUIRED
-    // =========================
 
     test("adminRequired — non-admin → 403", async () => {
         const token = jwt.sign({ id: "abc123" }, conf.SECRET);

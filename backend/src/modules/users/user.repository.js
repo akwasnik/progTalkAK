@@ -32,6 +32,10 @@ class UserRepository {
             { new: true } // -||-
         );
     }
+    
+    async existsAdmin() {
+        return User.exists({ isAdmin: true });
+    }
 
     async allowUser(id, isAllowed) {
         return User.findByIdAndUpdate(

@@ -13,14 +13,31 @@ class AuthService {
         const exists = await userRepository.findByLogin(data.login);
         if (exists) throw ApiError.badRequest("Login already taken");
 
-        const hashedPassword = await genHash(data.password);
+        const hashedPassword = genHash(data.password);
 
         const user = await userRepository.createUser({
             login: data.login,
-            password: hashedPassword,
+            passwordHashed: hashedPassword,
             registrationDate: new Date(),
             isAdmin: false,
             isAllowed: false
+        });
+
+        return user;
+    }
+
+    async registerAdmin(data) {
+        const exists = await userRepository.findByLogin(data.login);
+        if (exists) throw ApiError.badRequest("Login already taken");
+
+        const hashedPassword = genHash(data.password);
+
+        const user = await userRepository.createUser({
+            login: data.login,
+            passwordHashed: hashedPassword,
+            registrationDate: new Date(),
+            isAdmin: true,
+            isAllowed: true
         });
 
         return user;

@@ -3,8 +3,7 @@ const SRC = path.join(process.cwd(),"src")
 const app = require(path.join(process.cwd(),'app.js'));
 const conf = require(path.join(SRC, 'config'));
 const bootstrapAdmin = require(path.join(SRC, "common", "utils", "bootstrapAdmin"));
-
-let sio;
+const { initSocket } = require(path.join(SRC, "sockets", "socket"));
 
 const startServer = async () =>{
 
@@ -17,11 +16,7 @@ const startServer = async () =>{
             console.log(`Serwer API: http://${conf.API_HOST}:${conf.PORT}`);
         });
 
-
-    sio = require('socket.io')(httpServer);
-    sio.on('connect', (/*socket*/) => {
-        console.log('Socket.io – połączenie');
-    });
+    initSocket(httpServer);
 }
 
 startServer().catch((err) => {

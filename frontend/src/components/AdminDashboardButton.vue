@@ -10,7 +10,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 
-defineProps({
+const props = defineProps({
   isAdmin: {
     type: Boolean,
     required: true

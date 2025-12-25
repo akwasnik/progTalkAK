@@ -1,24 +1,10 @@
 <template>
-  <div class="home">
+  <div>
     <h1>Home</h1>
-
-    <AdminDashboardButton :isAdmin="auth.user.isAdmin"/>
-    <ProfileButton :isAllowed="auth.user.isAllowed" />
-    <p>Zalogowany użytkownik</p>
-
-    <LogoutButton />
+    <p>Witaj {{ auth.user.login }}</p>
   </div>
 </template>
 
 <script setup>
-  import { auth } from "@/store/auth";
-  import LogoutButton from "@/components/LogoutButton.vue";
-  import AdminDashboardButton from "@/components/AdminDashboardButton.vue";
-  import ProfileButton from "../components/ProfileButton.vue";
+import { auth } from "@/store/auth";
 </script>
-
-<style scoped>
-.home {
-  padding: 2rem;
-}
-</style>

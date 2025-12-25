@@ -3,8 +3,11 @@ const SRC = path.join(process.cwd(),"src");
 const userRepository = require(path.join(SRC,"modules","users","user.repository"));
 const conf = require(path.join(SRC, 'config',));
 
+const { emitToAdmins } = require(path.join(SRC, "sockets", "socket"));
+
 const jwt = require("jsonwebtoken");
 const { genHash,cmpHash } = require(path.join(SRC,"common","utils","hash"));
+
 const ApiError = require(path.join(SRC,"common","errors","ApiError"));
 
 class AuthService {
@@ -21,6 +24,11 @@ class AuthService {
             registrationDate: new Date(),
             isAdmin: false,
             isAllowed: false
+        });
+        
+        emitToAdmins("user-awaiting-approval", {
+            login: user.login,
+            userId: user._id
         });
 
         return user;

@@ -1,81 +1,81 @@
 import { createRouter, createWebHistory } from "vue-router";
-
-import Login from "@/views/Login.vue";
-import Home from "@/views/Home.vue";
-import NotAllowed from "@/views/NotAllowed.vue";
-import Register from "@/views/Register.vue";
-import AdminDashboard from "@/views/AdminDashboard.vue";
-import Profile from "@/views/Profile.vue";
-
 import { auth } from "@/store/auth";
 
+import Login from "@/views/Login.vue";
+import Register from "@/views/Register.vue";
+import NotAllowed from "@/views/NotAllowed.vue";
+
+import Home from "@/views/Home.vue";
+import Profile from "@/views/Profile.vue";
+import AdminDashboard from "@/views/AdminDashboard.vue";
+
+import AuthLayout from "@/layouts/AuthLayout.vue";
+
 const routes = [
+  // PUBLIC (NO LAYOUT)
   {
     path: "/login",
-    name: "login",
     component: Login
   },
   {
     path: "/register",
-    name: "register",
     component: Register
   },
   {
     path: "/not-allowed",
-    name: "notAllowed",
     component: NotAllowed
   },
+
+  // AUTH LAYOUT
   {
     path: "/",
-    name: "home",
-    component: Home
-  },
-  {
-    path: "/profile",
-    name: "profile",
-    component: Profile
-  },
-  {
-    path: "/admin",
-    name: "admin",
-    component: AdminDashboard
+    component: AuthLayout,
+    children: [
+      {
+        path: "",
+        component: Home
+      },
+      {
+        path: "profile",
+        component: Profile
+      },
+      {
+        path: "admin",
+        component: AdminDashboard,
+        meta: { adminOnly: true }
+      }
+    ]
   }
 ];
-
 
 const router = createRouter({
   history: createWebHistory(),
   routes
 });
 
-// guard
+// GLOBAL GUARD
 router.beforeEach(async (to) => {
   if (auth.loading) {
     await auth.init();
   }
-  
+
   const isPublic = ["/login", "/register"].includes(to.path);
 
-  // niezalogowany
   if (!auth.user) {
     if (isPublic) return true;
     return "/login";
   }
-  
-  // zalogowany, ale NIE allowed
+
   if (!auth.user.isAllowed) {
     if (to.path === "/not-allowed") return true;
     return "/not-allowed";
   }
 
-  // zalogowany i allowed
-  if (auth.user.isAllowed) {
-    if (to.path === "/not-allowed") return "/";
-    if (isPublic) return "/";
+  if (to.meta.adminOnly && !auth.user.isAdmin) {
+    return "/";
   }
 
-  // dostep do dashboard tylko jezeli jestesmy adminem
-  if (auth.user && !auth.user.isAdmin && to.path === "/admin") {
+  if (auth.user && isPublic) {
     return "/";
   }
 

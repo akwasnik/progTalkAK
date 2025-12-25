@@ -1,38 +1,39 @@
-services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: progtalk-backend
-    restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      MONGO_URI: mongodb://mongo:27017/progtalk
-      NODE_ENV: development
-    depends_on:
-      - mongo
-    networks:
-      - progtalk-network
-    volumes:
-      - ./backend:/app
+version: "3.9"
 
+services:
   mongo:
-    image: mongo
-    container_name: progtalk-mongo
-    restart: always
+    image: mongo:7
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: progtalk
-    volumes:
-      - progtalk-mongo-data:/data/db
-    networks:
-      - progtalk-network
 
-networks:
-  progtalk-network:
-    driver: bridge
+  backend:
+    build: ./backend
+    container_name: backend
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    env_file:
+      - ./frontend/.env
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - frontend
+      - backend
 
 volumes:
-  progtalk-mongo-data:
+  mongo_data:

@@ -27,6 +27,10 @@ app.use(passport.initialize());
 const authRoutes = require(path.join(SRC,"modules","auth","auth.routes"))
 app.use("/api/auth", authRoutes);
 
+// TOPICS
+const topicRoutes = require(path.join(SRC,"modules","topics","topic.routes"))
+
+
 const errorMiddleware = require(path.join(SRC,"common","errors","error-middleware"))
 app.use(errorMiddleware);
 

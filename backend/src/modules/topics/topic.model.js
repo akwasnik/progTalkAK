@@ -5,7 +5,6 @@ const TopicSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
     },
 
     description: {
@@ -33,24 +32,20 @@ const TopicSchema = new mongoose.Schema(
     ],
 
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
+      type: String,
+      required: true,
+      index: true
     },
 
-    moderators: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
-    ],
+    moderators: {
+      type: [String],
+      default: []
+    },
 
-    blockedUsers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
-    ],
+    blockedUsers: {
+      type: [String],
+      default: []
+    },
 
     isClosed: {
       type: Boolean,

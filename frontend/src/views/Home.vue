@@ -1,10 +1,24 @@
 <template>
   <div>
-    <h1>Home</h1>
-    <p>Witaj {{ auth.user.login }}</p>
+    <AddTopic @created="reloadTopics" />
+    <Topics ref="topicsRef" :isAdmin="auth.user.isAdmin" :login="auth.user.login"/>
   </div>
 </template>
 
 <script setup>
-import { auth } from "@/store/auth";
+  import { ref } from "vue";
+  import { auth } from "@/store/auth";
+
+  import Topics from "@/components/Topics.vue";
+  import AddTopic from "@/components/AddTopic.vue";
+
+  const topicsRef = ref(null);
+
+  const reloadTopics = async () => {
+    try {
+      await topicsRef.value.loadTopics();
+    } catch (err) {
+      console.error("Nie udało się przeładować topiców", err);
+    }
+  };
 </script>

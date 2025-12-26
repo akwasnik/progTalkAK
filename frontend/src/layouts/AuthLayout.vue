@@ -2,6 +2,8 @@
   <div>
     <header class="navbar">
       <div class="navbar-left">
+        <AppLogo />
+
         <ProfileButton :isAllowed="auth.user.isAllowed" />
         <AdminDashboardButton :isAdmin="auth.user.isAdmin" />
       </div>
@@ -27,6 +29,8 @@ import ProfileButton from "@/components/ProfileButton.vue";
 import AdminDashboardButton from "@/components/AdminDashboardButton.vue";
 import LogoutButton from "@/components/LogoutButton.vue";
 import AdminNotificationsButton from "../components/AdminNotificationsButton.vue";
+import AppLogo from "@/components/AppLogo.vue";
+
 
 onBeforeMount(() => {
   initSocket(auth.user.isAdmin);

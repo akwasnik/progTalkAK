@@ -172,7 +172,7 @@ class TopicService {
     return topicRepository.setClosed(topicId, isClosed);
   }
 
-  async setHidden(topicId, isHidden, userLogin, isAdmin) {
+  async setHidden(topicId, isHidden, isAdmin) {
     const topic = await topicRepository.findById(topicId);
     if (!topic) {
       throw ApiError.notFound("Topic not found");

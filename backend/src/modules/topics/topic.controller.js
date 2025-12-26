@@ -141,7 +141,6 @@ class TopicController {
       const topic = await topicService.setHidden(
         req.params.id,
         isHidden,
-        req.user.login,
         req.user.isAdmin
       );
 

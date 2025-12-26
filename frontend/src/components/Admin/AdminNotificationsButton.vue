@@ -20,7 +20,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { getSocket } from "@/services/socket";
-import AdminNotifications from "./AdminNotifications.vue";
+import AdminNotifications from "@/Admin/AdminNotifications.vue";
 
 const props = defineProps({
   isAdmin: {

@@ -1,123 +1,176 @@
 <template>
   <Teleport to="body">
-    <div class="overlay" @click.self="emit('close')">
-      <div class="modal">
-        <header class="modal-header">
-          <h2>{{ topic.name }}</h2>
-          <button class="close" @click="emit('close')">✖</button>
-        </header>
-
-        <section class="content">
-          <p class="desc">{{ topic.description || "Brak opisu" }}</p>
-
-          <div class="meta">
-            <span>Autor: <strong>{{ topic.createdBy }}</strong></span>
-            <span v-if="topic.isClosed" class="badge closed">Zamknięty</span>
-            <span v-if="topic.isHidden" class="badge hidden">Ukryty</span>
-          </div>
-
-          <!-- PARENT -->
-          <button
-            v-if="topic.parent"
-            class="link"
-            @click="emit('open-parent', topic.parent)"
-          >
-            ⬆ Przejdź do tematu nadrzędnego
-          </button>
-
-          <!-- ACTIONS -->
-          <div v-if="canManage" class="actions">
-            <h4>Moderacja</h4>
-
-            <input v-model="loginInput" placeholder="Login (email)" />
-
-            <div class="action-buttons">
-              <button @click="addModerator">➕ Moderator</button>
-              <button @click="removeModerator">➖ Moderator</button>
-              <button @click="blockUser">🚫 Zablokuj</button>
-              <button @click="unblockUser">✅ Odblokuj</button>
+    <Transition name="modal">
+      <div class="overlay" @click.self="emit('close')">
+        <div class="modal">
+          <!-- HEADER -->
+          <header class="header">
+            <div class="title-section">
+              <button
+                v-if="topic.parent"
+                class="parent-btn"
+                @click.stop="emit('open-parent', topic.parent)"
+              >
+                ⬆ Nadtemat
+              </button>
+              <h2 class="title">{{ topic.name }}</h2>
+              <p class="description">
+                {{ topic.description || "Brak opisu tematu" }}
+              </p>
             </div>
 
-            <button class="subtopic" @click="createSubtopic">
-              🌱 Utwórz subtopic
-            </button>
+            <div class="header-actions">
+              <button
+                class="icon-btn"
+                title="Dodaj podtemat"
+                @click.stop="showSubtopicModal = true"
+              >
+                +
+              </button>
+
+              <button
+                v-if="canSeeOptions"
+                class="icon-btn"
+                title="Opcje"
+                @click.stop="showOptionsModal = true"
+              >
+                ⚙
+              </button>
+
+              <!-- CLOSE -->
+              <button
+                class="icon-btn close"
+                title="Zamknij"
+                @click="emit('close')"
+              >
+                ✕
+              </button>
+            </div>
+          </header>
+
+          <!-- META -->
+          <div class="meta">
+            <span class="author">
+              Utworzył: <strong>{{ topic.createdBy }}</strong>
+            </span>
+
+            <div class="badges">
+              <span v-if="topic.isClosed" class="badge closed">
+                Zamknięty
+              </span>
+              <span v-if="topic.isHidden" class="badge hidden">
+                Ukryty
+              </span>
+            </div>
           </div>
 
-          <p v-if="error" class="error">{{ error }}</p>
-        </section>
+          <section class="content">
+            <!-- przyszłe posty -->
+          </section>
+        </div>
       </div>
-    </div>
+    </Transition>
   </Teleport>
+
+  <!-- SUBTOPIC MODAL -->
+  <SubtopicModal
+    v-if="showSubtopicModal"
+    :parentTopic="topic"
+    @close="showSubtopicModal = false"
+    @created="handleRefresh"
+  />
+
+  <!-- OPTIONS MODAL -->
+  <TopicOptionsModal
+    v-if="showOptionsModal"
+    :canEdit="canEdit"
+    :canManageModerators="canManageModerators"
+    :canManageBlocked="canManageBlocked"
+    @close="showOptionsModal = false"
+    @action="handleOption"
+  />
 </template>
 
 <script setup>
-import { onBeforeMount, ref } from "vue";
-import api from "@/services/api";
+import { ref, computed } from "vue";
+
+import SubtopicModal from "@/components/Topic/SubtopicModal.vue";
+import TopicOptionsModal from "@/components/Topic/TopicOptionsModal.vue";
 
 const props = defineProps({
-  topic: Object,
-  login: String,
-  isAdmin: Boolean
+  topic: {
+    type: Object,
+    required: true,
+  },
+  login: {
+    type: String,
+    required: true,
+  },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["close", "refresh", "open-parent"]);
 
-const loginInput = ref("");
-const error = ref("");
+const isOwner = computed(
+  () => props.topic.createdBy === props.login
+);
 
-const canManage = ref(false);
+const isModerator = computed(
+  () => props.topic.isModerator === true
+);
 
-async function checkCanManage(){
-  if(props.isAdmin) canManage.value = true;
-}
+const canSeeFullOptions = computed(
+  () => props.isAdmin || isOwner.value
+);
 
-onBeforeMount()
+const canSeeLimitedOptions = computed(
+  () => isModerator.value && !canSeeFullOptions.value
+);
 
-const action = async (fn) => {
-  error.value = "";
-  try {
-    await fn();
-    emit("refresh");
-  } catch (err) {
-    error.value = err;
-  }
+const canSeeOptions = computed(
+  () => canSeeFullOptions.value || canSeeLimitedOptions.value
+);
+
+const canEdit = computed(
+  () => canSeeFullOptions.value
+);
+
+const canManageModerators = computed(
+  () => canSeeOptions.value
+);
+
+const canManageBlocked = computed(
+  () => canSeeOptions.value
+);
+
+const showSubtopicModal = ref(false);
+const showOptionsModal = ref(false);
+
+const handleRefresh = () => {
+  showSubtopicModal.value = false;
+  emit("refresh")
 };
 
-const addModerator = () =>
-  action(() =>
-    api.post(`/topics/${props.topic._id}/moderators`, {
-      login: loginInput.value
-    })
-  );
+const handleOption = (type) => {
+  showOptionsModal.value = false;
 
-const removeModerator = () =>
-  action(() =>
-    api.delete(`/topics/${props.topic._id}/moderators`, {
-      data: { login: loginInput.value }
-    })
-  );
+  switch (type) {
+    case "edit":
+      emit("refresh");
+      break;
 
-const blockUser = () =>
-  action(() =>
-    api.post(`/topics/${props.topic._id}/block`, {
-      login: loginInput.value
-    })
-  );
+    case "moderators":
+      console.log("OPEN MODERATORS MODAL");
+      break;
 
-const unblockUser = () =>
-  action(() =>
-    api.post(`/topics/${props.topic._id}/unblock`, {
-      login: loginInput.value
-    })
-  );
-
-const createSubtopic = () =>
-  action(() =>
-    api.post("/topics", {
-      name: "Nowy subtopic",
-      parent: props.topic._id
-    })
-  );
+    case "blocked":
+      console.log("OPEN BLOCKED USERS MODAL");
+      break;
+  }
+};
 </script>
 
 <style scoped>
@@ -125,101 +178,107 @@ const createSubtopic = () =>
   position: fixed;
   inset: 0;
   background: rgba(10, 20, 40, 0.75);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 999;
 }
 
 .modal {
-  width: min(640px, 92%);
+  width: min(720px, 94%);
   background: var(--bg-secondary);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-strong);
-  animation: scaleIn 0.25s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.modal-header {
+.header {
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 22px;
   border-bottom: 1px solid var(--border-soft);
 }
 
-.content {
-  padding: 16px;
+.title {
+  font-size: 22px;
+  font-weight: 600;
 }
 
-.desc {
-  opacity: 0.9;
-  margin-bottom: 12px;
+.description {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.icon-btn:hover {
+  background: rgba(80, 200, 160, 0.15);
+  color: var(--accent);
 }
 
 .meta {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
 }
 
 .badge {
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
 }
 
 .closed {
-  background: #8b0000;
+  background: rgba(180, 60, 60, 0.25);
+  color: #ff9b9b;
 }
 
 .hidden {
-  background: #555;
+  background: rgba(120, 120, 120, 0.25);
+  color: #ddd;
 }
 
-.actions {
-  margin-top: 16px;
+.content {
+  padding: 22px;
+  min-height: 220px;
+  opacity: 0.4;
+  font-style: italic;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 8px 0;
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-button {
-  background: var(--accent);
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-}
-
-.link {
-  background: none;
-  color: var(--accent);
-  padding: 0;
-}
-
-.close {
-  background: none;
-  font-size: 18px;
-}
-
-.error {
-  color: #ff6b6b;
-  margin-top: 8px;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.92) translateY(10px);
 }
 </style>

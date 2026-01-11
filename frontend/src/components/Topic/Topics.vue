@@ -47,7 +47,7 @@
               class="action-btn"
               @click="toggleHidden(t)"
             >
-              {{ t.isHidden ? "👁 Show" : "🙈 Hide" }}
+              {{ t.isHidden ? "👁 Show" : "Hide" }}
             </button>
 
             <button
@@ -95,8 +95,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import api from "@/services/api";
 import TopicModal from "@/components/Topic/TopicModal.vue";
+import { fetchTopics } from "@/services/topics";
+import { fetchTopic, patchToggleTopicClosed, patchToggleTopicHidden } from "@/services/topics";
 
 const props = defineProps({
   login: {
@@ -112,11 +113,15 @@ const props = defineProps({
 const topics = ref([]);
 const activeTopic = ref(null);
 
-
 const loadTopics = async () => {
-  const res = await api.get("/topics");
-  topics.value = res.data;
+  const res = await fetchTopics();
+  topics.value = res;
 };
+
+defineExpose({
+  loadTopics
+});
+
 
 const reloadTopics = async () => {
   await loadTopics();
@@ -134,22 +139,18 @@ const openTopic = (topic) => {
 };
 
 const openParent = async (parentId) => {
-  const res = await api.get(`/topics/${parentId}`);
-  activeTopic.value = res.data;
+  const res = await fetchTopic(parentId);
+  activeTopic.value = res;
 };
 
 
 const toggleHidden = async (topic) => {
-  await api.patch(`/topics/${topic._id}/hidden`, {
-    isHidden: !topic.isHidden
-  });
+  await patchToggleTopicHidden(topic);
   await reloadTopics();
 };
 
 const toggleClosed = async (topic) => {
-  await api.patch(`/topics/${topic._id}/closed`, {
-    isClosed: !topic.isClosed
-  });
+  await patchToggleTopicClosed(topic)
   await reloadTopics();
 };
 
@@ -200,6 +201,7 @@ onMounted(loadTopics);
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(80, 200, 160, 0);
   transition: box-shadow 0.25s ease;
+  pointer-events: none;
 }
 
 .topic-item:hover::after {

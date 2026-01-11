@@ -32,7 +32,7 @@
 
 <script setup>
 import { ref } from "vue";
-import api from "@/services/api";
+import { postTopic } from "@/services/topics";
 
 const emit = defineEmits(["created"]);
 
@@ -49,10 +49,7 @@ const handleSubmit = async () => {
   }
 
   try {
-    await api.post("/topics", {
-      name: name.value,
-      description: description.value
-    });
+    const topic = await postTopic(name.value,description.value)
 
     name.value = "";
     description.value = "";

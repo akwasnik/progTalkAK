@@ -12,12 +12,7 @@ const authRequired = require(
 
 const router = Router();
 
-/*
-  Wszystkie operacje na topicach
-  wymagają zalogowania
-*/
 
-// GET /topics
 router.get("/", authRequired, topicController.getAll);
 
 router.get("/:id", authRequired, topicController.getById);

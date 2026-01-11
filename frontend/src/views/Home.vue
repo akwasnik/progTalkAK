@@ -9,14 +9,15 @@
   import { ref } from "vue";
   import { auth } from "@/store/auth";
 
-  import Topics from "@/components/Topics.vue";
-  import AddTopic from "@/components/AddTopic.vue";
+  import Topics from "@/components/Topic/Topics.vue";
+  import AddTopic from "@/components/Topic/AddTopic.vue";
 
   const topicsRef = ref(null);
 
-  const reloadTopics = async () => {
+  const reloadTopics = async (topic) => {
     try {
       await topicsRef.value.loadTopics();
+      if(topic) topicsRef.value.openTopic(topic);
     } catch (err) {
       console.error("Nie udało się przeładować topiców", err);
     }

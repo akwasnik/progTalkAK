@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-  import LogoutButton from "@/components/LogoutButton.vue";
+  import LogoutButton from "@/components/misc/LogoutButton.vue";
 </script>
 
 <style scoped>

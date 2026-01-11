@@ -25,11 +25,11 @@ import { onBeforeMount, onUnmounted } from "vue";
 import { auth } from "@/store/auth";
 import { initSocket, disconnectSocket } from "@/services/socket";
 
-import ProfileButton from "@/components/ProfileButton.vue";
-import AdminDashboardButton from "@/components/AdminDashboardButton.vue";
-import LogoutButton from "@/components/LogoutButton.vue";
-import AdminNotificationsButton from "../components/AdminNotificationsButton.vue";
-import AppLogo from "@/components/AppLogo.vue";
+import ProfileButton from "@/components/misc/ProfileButton.vue";
+import AdminDashboardButton from "@/components/Admin/AdminDashboardButton.vue";
+import LogoutButton from "@/components/misc/LogoutButton.vue";
+import AdminNotificationsButton from "@/components/Admin/AdminNotificationsButton.vue";
+import AppLogo from "@/components/misc/AppLogo.vue";
 
 
 onBeforeMount(() => {

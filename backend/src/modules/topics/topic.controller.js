@@ -84,6 +84,33 @@ class TopicController {
     }
   }
 
+  async getAllModerators(req, res, next) {
+    try {
+      const moderators = await topicService.getAllModerators(
+        req.params.id,
+        req.user.login,
+        req.user.isAdmin
+      );
+
+      res.json(moderators);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async checkIsModerator(req, res, next) {
+    try {
+      const isModerator = await topicService.checkIsModerator(
+        req.params.id,
+        req.user.login
+      );
+
+      res.json({ isModerator });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async blockUser(req, res, next) {
     try {
       const { login } = req.body;
@@ -117,6 +144,36 @@ class TopicController {
       next(err);
     }
   }
+
+  async getAllBlocked(req, res, next) {
+    try {
+      const blockedUsers = await topicService.getAllBlocked(
+        req.params.id,
+        req.user.login,
+        req.user.isAdmin
+      );
+
+      res.json(blockedUsers);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async checkAccess(req, res, next) {
+    try {
+      const access = await topicService.checkAccess(
+        req.params.id,
+        req.user.login
+      );
+
+      res.json({ access });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
+
 
   async setClosed(req, res, next) {
     try {

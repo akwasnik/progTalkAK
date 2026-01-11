@@ -72,7 +72,6 @@
     </Transition>
   </Teleport>
 
-  <!-- SUBTOPIC MODAL -->
   <SubtopicModal
     v-if="showSubtopicModal"
     :parentTopic="topic"
@@ -80,22 +79,24 @@
     @created="handleRefresh"
   />
 
-  <!-- OPTIONS MODAL -->
   <TopicOptionsModal
     v-if="showOptionsModal"
+    :topic="topic"
     :canEdit="canEdit"
     :canManageModerators="canManageModerators"
     :canManageBlocked="canManageBlocked"
     @close="showOptionsModal = false"
-    @action="handleOption"
+    @updated="handleRefresh"
   />
+
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 
 import SubtopicModal from "@/components/Topic/SubtopicModal.vue";
 import TopicOptionsModal from "@/components/Topic/TopicOptionsModal.vue";
+import { checkIsModerator } from "@/services/topics";
 
 const props = defineProps({
   topic: {
@@ -118,9 +119,12 @@ const isOwner = computed(
   () => props.topic.createdBy === props.login
 );
 
-const isModerator = computed(
-  () => props.topic.isModerator === true
-);
+const isMod = ref(false);
+
+const checkIsMod = async () => {
+  const { isModerator } = await checkIsModerator(props.topic);
+  isMod.value = isModerator;
+}
 
 const canSeeFullOptions = computed(
   () => props.isAdmin || isOwner.value
@@ -151,26 +155,12 @@ const showOptionsModal = ref(false);
 
 const handleRefresh = () => {
   showSubtopicModal.value = false;
-  emit("refresh")
+  showOptionsModal.value = false
+  emit("refresh");
 };
 
-const handleOption = (type) => {
-  showOptionsModal.value = false;
+onBeforeMount(checkIsMod);
 
-  switch (type) {
-    case "edit":
-      emit("refresh");
-      break;
-
-    case "moderators":
-      console.log("OPEN MODERATORS MODAL");
-      break;
-
-    case "blocked":
-      console.log("OPEN BLOCKED USERS MODAL");
-      break;
-  }
-};
 </script>
 
 <style scoped>

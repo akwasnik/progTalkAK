@@ -33,6 +33,14 @@ router.patch(
   topicController.removeModerator
 );
 
+router.get("/:id/moderators", authRequired, topicController.getAllModerators);
+
+router.get(
+  "/:id/isModerator",
+  authRequired,
+  topicController.checkIsModerator
+);
+
 router.patch(
   "/:id/block",
   authRequired,
@@ -44,6 +52,15 @@ router.patch(
   authRequired,
   topicController.unblockUser
 );
+
+router.get("/:id/blocked", authRequired, topicController.getAllBlocked);
+
+router.get(
+  "/:id/access",
+  authRequired,
+  topicController.checkAccess
+);
+
 
 router.patch(
   "/:id/closed",

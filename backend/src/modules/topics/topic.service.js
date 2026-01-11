@@ -63,6 +63,7 @@ class TopicService {
     return topicRepository.updateTopic(id, data);
   }
 
+// MODERATORS
 
   async addModerator(topicId, loginToAdd, userLogin, isAdmin) {
     const topic = await topicRepository.findById(topicId);
@@ -96,8 +97,8 @@ class TopicService {
     }
 
     const isModerator = await topicRepository.checkModerator(topicId, userLogin);
-    const isLoginToAddModerator = await topicRepository.checkModerator(topicId, loginToAdd);
-    if(isLoginToAddModerator){
+    const isLoginToRemoveModerator = await topicRepository.checkModerator(topicId, loginToRemove);
+    if(isLoginToRemoveModerator){
       throw ApiError.notFound("User is not a moderator");
     }
 
@@ -108,6 +109,29 @@ class TopicService {
     return topicRepository.removeModerator(topicId, loginToRemove);
   }
 
+  async getAllModerators(topicId, userLogin, isAdmin) {
+    const topic = await topicRepository.findById(topicId);
+    if (!topic) {
+      throw ApiError.notFound("Topic not found");
+    }
+
+    const isModerator = await topicRepository.checkModerator(topicId, userLogin);
+
+    if (!isAdmin && !isModerator) {
+      throw ApiError.forbidden("No permission to view moderators");
+    }
+
+    return topicRepository.getAllModerators(topicId);
+  }
+
+  async checkIsModerator(topicId, userLogin) {
+    const isModerator = await topicRepository.checkModerator(topicId, userLogin);
+
+    return (isModerator) ? true : false;
+  }
+
+
+// BLOCKED
 
   async blockUser(topicId, loginToBlock, userLogin, isAdmin) {
     const topic = await topicRepository.findById(topicId);
@@ -122,7 +146,7 @@ class TopicService {
     const isModerator = await topicRepository.checkModerator(topicId, userLogin);
     const isLoginToBlockModerator = await topicRepository.checkModerator(topicId, loginToBlock);
     const isLoginToBlockBlocked = await topicRepository.checkBlocked(topicId, loginToBlock);
-    const isLoginToBlockAdmin = await userRepository.findByLogin(loginToAdd)
+    const isLoginToBlockAdmin = await userRepository.findByLogin(loginToBlock)
 
     if(isLoginToBlockBlocked){
       throw ApiError.badRequest("User is already blocked");
@@ -159,6 +183,29 @@ class TopicService {
     return topicRepository.unblockUser(topicId, loginToUnblock);
   }
 
+  async checkAccess(topicId, userLogin) {
+    const isBlocked = await topicRepository.checkBlocked(topicId, userLogin);
+
+    return (isBlocked) ? false : true;
+  }
+
+  async getAllBlocked(topicId, userLogin, isAdmin) {
+    const topic = await topicRepository.findById(topicId);
+    if (!topic) {
+      throw ApiError.notFound("Topic not found");
+    }
+
+    const isModerator = await topicRepository.checkModerator(topicId, userLogin);
+
+    if (!isAdmin && !isModerator) {
+      throw ApiError.forbidden("No permission to view blocked users");
+    }
+
+    return topicRepository.getAllBlocked(topicId);
+  }
+
+// STATE
+
   async setClosed(topicId, isClosed, isAdmin) {
     const topic = await topicRepository.findById(topicId);
     if (!topic) {
@@ -185,14 +232,6 @@ class TopicService {
     return topicRepository.setHidden(topicId, isHidden);
   }
 
-  async checkAccess(topicId, userLogin) {
-    const isBlocked = await topicRepository.checkBlocked(topicId, userLogin);
-    if (isBlocked) {
-      throw ApiError.forbidden("User is blocked in this topic");
-    }
-
-    return true;
-  }
 }
 
 module.exports = new TopicService();

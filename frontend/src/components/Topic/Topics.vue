@@ -98,6 +98,7 @@ import { ref, computed, onMounted } from "vue";
 import TopicModal from "@/components/Topic/TopicModal.vue";
 import { fetchTopics } from "@/services/topics";
 import { fetchTopic, patchToggleTopicClosed, patchToggleTopicHidden } from "@/services/topics";
+import { checkAccess } from "../../services/topics";
 
 const props = defineProps({
   login: {
@@ -125,6 +126,15 @@ defineExpose({
 
 const reloadTopics = async () => {
   await loadTopics();
+
+  if (!activeTopic.value) return;
+
+  try {
+    const refreshed = await fetchTopic(activeTopic.value._id);
+    activeTopic.value = refreshed;
+  } catch {
+    activeTopic.value = null;
+  }
 };
 
 const visibleTopics = computed(() =>
@@ -134,8 +144,9 @@ const visibleTopics = computed(() =>
 );
 
 
-const openTopic = (topic) => {
-  activeTopic.value = topic;
+const openTopic = async (topic) => {
+  const res = await checkAccess(topic);
+  if(res.access) activeTopic.value = topic;
 };
 
 const openParent = async (parentId) => {

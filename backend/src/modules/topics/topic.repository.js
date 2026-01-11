@@ -43,16 +43,49 @@ class TopicRepository {
     );
   }
 
-  async checkModerator(topicId, login) {
+  async getAllModerators(topicId) {
     const topic = await Topic.findById(topicId).select("path");
     if (!topic) return null;
 
     const topicsToCheck = [...topic.path, topic._id];
 
-    return Topic.exists({
+    const result = await Topic.aggregate([
+      {
+        $match: {
+          _id: { $in: topicsToCheck }
+        }
+      },
+      {
+        $project: {
+          moderators: 1
+        }
+      },
+      {
+        $unwind: "$moderators"
+      },
+      {
+        $group: {
+          _id: null,
+          moderators: { $addToSet: "$moderators" }
+        }
+      }
+    ]);
+
+    return result[0].moderators;
+  }
+
+  async checkModerator(topicId, login) {
+    const topic = await Topic.findById(topicId).select("path");
+    if (!topic) return false;
+
+    const topicsToCheck = [...topic.path, topic._id];
+
+    return Boolean(
+      await Topic.exists({
         _id: { $in: topicsToCheck },
-        moderators: login
-    });
+        moderators: login,
+      })
+    );
   }
 
   //  BLOCKED USERS 
@@ -83,6 +116,37 @@ class TopicRepository {
         _id: { $in: topicsToCheck },
         blockedUsers: login
     });
+  }
+
+  async getAllBlocked(topicId) {
+    const topic = await Topic.findById(topicId).select("path");
+    if (!topic) return [];
+
+    const topicsToCheck = [...topic.path, topic._id];
+
+    const result = await Topic.aggregate([
+      {
+        $match: {
+          _id: { $in: topicsToCheck }
+        }
+      },
+      {
+        $project: {
+          blockedUsers: 1
+        }
+      },
+      {
+        $unwind: "$blockedUsers"
+      },
+      {
+        $group: {
+          _id: null,
+          blockedUsers: { $addToSet: "$blockedUsers" }
+        }
+      }
+    ]);
+
+    return result[0].blockedUsers;
   }
 
   //  STATE 

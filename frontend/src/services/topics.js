@@ -22,9 +22,22 @@ export const postTopic = (name,description) =>
       description: description
     }).then(res => res.data);
 
+export const patchTopic = (topic,name,description) => 
+    api.patch(`/api/topics/${topic._id}`,{
+      name,
+      description
+    });
+
 export const postSubtopic = (name,description,parentId) =>
     api.post("/api/topics", {
       name: name,
       description: description,
       parent: parentId
     }).then(res => res.data);
+
+export const checkAccess = (topic) =>
+    api.get(`/api/topics/${topic._id}/access`).then(res => res.data);
+
+
+export const checkIsModerator = (topic) =>
+    api.get(`/api/topics/${topic._id}/isModerator`).then(res => res.data);

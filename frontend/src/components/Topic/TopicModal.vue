@@ -21,6 +21,7 @@
 
             <div class="header-actions">
               <button
+                v-if="isMod"
                 class="icon-btn"
                 title="Dodaj podtemat"
                 @click.stop="showSubtopicModal = true"
@@ -131,7 +132,7 @@ const canSeeFullOptions = computed(
 );
 
 const canSeeLimitedOptions = computed(
-  () => isModerator.value && !canSeeFullOptions.value
+  () => isMod.value && !canSeeFullOptions.value
 );
 
 const canSeeOptions = computed(

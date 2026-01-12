@@ -151,7 +151,7 @@ const openTopic = async (topic) => {
 
 const openParent = async (parentId) => {
   const res = await fetchTopic(parentId);
-  activeTopic.value = res;
+  openTopic(res);
 };
 
 

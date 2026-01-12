@@ -128,11 +128,45 @@ class TopicController {
     }
   }
 
+  async blockUserRecursively(req, res, next) {
+    try {
+      const { login } = req.body;
+
+      const topic = await topicService.blockUserRecursively(
+        req.params.id,
+        login,
+        req.user.login,
+        req.user.isAdmin
+      );
+
+      res.json(topic);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async unblockUser(req, res, next) {
     try {
       const { login } = req.body;
 
       const topic = await topicService.unblockUser(
+        req.params.id,
+        login,
+        req.user.login,
+        req.user.isAdmin
+      );
+
+      res.json(topic);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async unblockUserRecursively(req, res, next) {
+    try {
+      const { login } = req.body;
+
+      const topic = await topicService.unblockUserRecursively(
         req.params.id,
         login,
         req.user.login,

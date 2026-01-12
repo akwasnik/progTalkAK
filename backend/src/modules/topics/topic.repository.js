@@ -71,7 +71,7 @@ class TopicRepository {
       }
     ]);
 
-    return result[0].moderators;
+    return (result.length === 0)? [] : result[0].moderators;
   }
 
   async checkModerator(topicId, login) {
@@ -98,6 +98,20 @@ class TopicRepository {
     );
   }
 
+  async blockUserRecursive(topicId, login) {
+    return Topic.updateMany(
+      {
+        $or: [
+          { _id: topicId },
+          { path: topicId }
+        ]
+      },
+      {
+        $addToSet: { blockedUsers: login }
+      }
+    );
+  }
+
   async unblockUser(topicId, login) {
     return Topic.findByIdAndUpdate(
       topicId,
@@ -106,11 +120,25 @@ class TopicRepository {
     );
   }
 
+  async unblockUserRecursive(topicId, login) {
+    return Topic.updateMany(
+      {
+        $or: [
+          { _id: topicId },
+          { path: topicId }
+        ]
+      },
+      {
+        $pull: { blockedUsers: login }
+      }
+    );
+  }
+
   async checkBlocked(topicId, login) {
     const topic = await Topic.findById(topicId).select("path");
     if (!topic) return null;
 
-    const topicsToCheck = [...topic.path, topic._id];
+    const topicsToCheck = [topic._id]; // wczesniej [...topic.path,topic._id ]
 
     return Topic.exists({
         _id: { $in: topicsToCheck },
@@ -122,7 +150,7 @@ class TopicRepository {
     const topic = await Topic.findById(topicId).select("path");
     if (!topic) return [];
 
-    const topicsToCheck = [...topic.path, topic._id];
+    const topicsToCheck = [topic._id]; // wczesniej [...topic.path,topic._id ]
 
     const result = await Topic.aggregate([
       {
@@ -145,8 +173,7 @@ class TopicRepository {
         }
       }
     ]);
-
-    return result[0].blockedUsers;
+    return (result.length === 0)? [] : result[0].blockedUsers;
   }
 
   //  STATE 

@@ -8,24 +8,19 @@
           <ul class="options">
             <li
               v-if="canEdit"
-              @click="openEdit"
+              @click="showEdit = true"
             >
               ✏ Edytuj temat
             </li>
 
-            <li
-              v-if="canManageModerators"
-              @click="noop"
-            >
+            <li v-if="canManageModerators" @click="showModerators = true">
               👥 Moderatorzy
             </li>
 
-            <li
-              v-if="canManageBlocked"
-              @click="noop"
-            >
+            <li v-if="canManageBlocked" @click="showBlocked = true">
               🚫 Zablokowani
             </li>
+
           </ul>
 
           <button class="close-btn" @click="emit('close')">
@@ -43,11 +38,26 @@
     @saved="handleUpdated"
   />
 
+  <TopicModeratorsModel
+    v-if="showModerators"
+    :topic="topic"
+    :canEdit="canEdit"
+    @close="showModerators = false"
+  />
+
+  <TopicBlockedModal
+    v-if="showBlocked"
+    :topic="topic"
+    @close="showBlocked = false"
+  />
+
 </template>
 
 <script setup>
 import { ref } from "vue";
 import TopicEditModal from "@/components/Topic/TopicEditModal.vue";
+import TopicModeratorsModel from "@/components/Topic/TopicModeratorsModel.vue";
+import TopicBlockedModal from "@/components/Topic/TopicBlockedModal.vue";
 
 const props = defineProps({
   topic: {
@@ -62,10 +72,9 @@ const props = defineProps({
 const emit = defineEmits(["close", "updated"]);
 
 const showEdit = ref(false);
+const showModerators = ref(false);
+const showBlocked = ref(false);
 
-const openEdit = () => {
-  showEdit.value = true;
-};
 
 const handleUpdated = () => {
   showEdit.value = false;

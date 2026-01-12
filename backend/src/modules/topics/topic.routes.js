@@ -48,9 +48,21 @@ router.patch(
 );
 
 router.patch(
+  "/:id/fullBlock",
+  authRequired,
+  topicController.blockUserRecursively
+);
+
+router.patch(
   "/:id/unblock",
   authRequired,
   topicController.unblockUser
+);
+
+router.patch(
+  "/:id/fullUnblock",
+  authRequired,
+  topicController.unblockUserRecursively
 );
 
 router.get("/:id/blocked", authRequired, topicController.getAllBlocked);

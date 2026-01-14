@@ -21,7 +21,7 @@
 
             <div class="header-actions">
               <button
-                v-if="isMod"
+                v-if="isMod || isAdmin"
                 class="icon-btn"
                 title="Dodaj podtemat"
                 @click.stop="showSubtopicModal = true"
@@ -30,7 +30,7 @@
               </button>
 
               <button
-                v-if="canSeeOptions"
+                v-if="canSeeOptions && !topic.isClosed"
                 class="icon-btn"
                 title="Opcje"
                 @click.stop="showOptionsModal = true"

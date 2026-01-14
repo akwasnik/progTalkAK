@@ -67,8 +67,8 @@ const handleLogin = async () => {
 
   try {
     await login(loginValue.value, password.value);
-    router.push("/");
     await auth.init();
+    router.push("/");
   } catch {
     error.value = "Nieprawidłowy login lub hasło";
   }

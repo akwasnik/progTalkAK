@@ -18,6 +18,16 @@ export const initSocket = (isAdmin) => {
   return socket;
 };
 
+export const joinTopic = (topicId) => {
+  if (!socket) return;
+  socket.emit("join-topic", topicId);
+};
+
+export const leaveTopic = (topicId) => {
+  if (!socket) return;
+  socket.emit("leave-topic", topicId);
+};
+
 export const getSocket = () => socket;
 
 export const disconnectSocket = () => {

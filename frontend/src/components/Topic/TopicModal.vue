@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div class="overlay" @click.self="emit('close')">
+      <div class="overlay">
         <div class="modal">
           <!-- HEADER -->
           <header class="header">
@@ -66,7 +66,15 @@
           </div>
 
           <section class="content">
-            <!-- przyszłe posty -->
+            <CreatePost
+              :topicId="topic._id"
+              @created="handleRefresh"
+            />
+            <PostList
+              :topicId="topic._id"
+              :login="login"
+              :isAdmin="isAdmin"
+            />
           </section>
         </div>
       </div>
@@ -93,11 +101,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 
 import SubtopicModal from "@/components/Topic/SubtopicModal.vue";
 import TopicOptionsModal from "@/components/Topic/TopicOptionsModal.vue";
+
+import CreatePost from "@/components/Post/CreatePost.vue";
+import PostList from "@/components/Post/PostList.vue";
+
 import { checkIsModerator } from "@/services/topics";
+import { getSocket, joinTopic, leaveTopic } from "@/services/socket";
 
 const props = defineProps({
   topic: {
@@ -156,11 +169,27 @@ const showOptionsModal = ref(false);
 
 const handleRefresh = () => {
   showSubtopicModal.value = false;
-  showOptionsModal.value = false
+  showOptionsModal.value = false;
   emit("refresh");
 };
 
 onBeforeMount(checkIsMod);
+
+// SOCKETY
+
+onMounted(() => {
+  const socket = getSocket();
+  if (!socket) return;
+
+  joinTopic(props.topic._id);
+});
+
+onUnmounted(() => {
+  const socket = getSocket();
+  if (!socket) return;
+
+  leaveTopic(props.topic._id);
+});
 
 </script>
 
@@ -256,9 +285,12 @@ onBeforeMount(checkIsMod);
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
   padding: 22px;
   min-height: 220px;
-  opacity: 0.4;
   font-style: italic;
 }
 

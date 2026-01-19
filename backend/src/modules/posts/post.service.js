@@ -5,6 +5,8 @@ const ApiError = require(path.join(SRC, "common", "errors", "ApiError"));
 const postRepository = require(path.join(SRC, "modules", "posts", "post.repository"));
 const topicRepository = require(path.join(SRC, "modules", "topics", "topic.repository"));
 const userRepository = require(path.join(SRC,"modules","users","user.repository"));
+const { emitToTopic } = require(path.join(SRC,"sockets","socket"));
+
 
 
 class PostService {
@@ -22,14 +24,18 @@ class PostService {
     if (blocked) {
       throw ApiError.forbidden("User is blocked in this topic");
     }
-
-    return postRepository.create({
+    
+    const post = await postRepository.create({
       topic: topicId,
       login,
       content,
       tags,
       references
     });
+
+    emitToTopic(topicId, "post-created", post);
+
+    return post;
   }
 
   async getPostsByTopic(topicId, { page = 0, limit = 20, isAdmin = false } = {}) {

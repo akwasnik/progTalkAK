@@ -31,6 +31,10 @@ app.use("/api/auth", authRoutes);
 const topicRoutes = require(path.join(SRC,"modules","topics","topic.routes"))
 app.use("/api/topics", topicRoutes);
 
+// POSTS
+const postRoutes = require(path.join(SRC,"modules","posts","post.routes"));
+app.use("/api", postRoutes);
+
 const errorMiddleware = require(path.join(SRC,"common","errors","error-middleware"))
 app.use(errorMiddleware);
 

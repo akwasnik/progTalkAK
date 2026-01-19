@@ -38,7 +38,7 @@
               <span>{{ m }}</span>
 
               <button
-                v-if="m !== topic.createdBy && canEdit && topic.moderators.includes(m)"
+                v-if="m !== topic.createdBy && canEdit"
                 class="remove"
                 @click="remove(m)"
               >
@@ -81,11 +81,9 @@ const error = ref("");
 
 const load = async () => {
   try {
-    console.log(props.topic.moderators);
     loading.value = true;
     error.value = "";
     moderators.value = await getModerators(props.topic._id);
-    console.log(moderators.value);
   } catch (e) {
     error.value =
       e.response?.data?.message ||

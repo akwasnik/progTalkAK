@@ -2,13 +2,10 @@ const path = require("node:path");
 const SRC = path.join(process.cwd(), "src");
 
 const { Router } = require("express");
-const topicController = require(
-  path.join(SRC, "modules", "topics", "topic.controller")
-);
 
-const authRequired = require(
-  path.join(SRC, "common", "middleware", "authRequired")
-);
+const topicController = require(path.join(SRC, "modules", "topics", "topic.controller"));
+
+const authRequired = require(path.join(SRC, "common", "middleware", "authRequired"));
 
 const router = Router();
 

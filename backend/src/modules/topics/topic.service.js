@@ -74,6 +74,9 @@ class TopicService {
     const isModerator = await topicRepository.checkModerator(topicId, userLogin);
     const isLoginToAddModerator = await topicRepository.checkModerator(topicId, loginToAdd);
     const isLoginToAddAdmin = await userRepository.findByLogin(loginToAdd)
+    if(!isLoginToAddAdmin){
+      throw ApiError.badRequest("Login not found");
+    }
 
     if(isLoginToAddModerator || isLoginToAddAdmin.isAdmin){
       throw ApiError.forbidden("Login is already moderator or admin");

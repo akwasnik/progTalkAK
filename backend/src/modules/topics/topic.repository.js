@@ -47,7 +47,8 @@ class TopicRepository {
     const topic = await Topic.findById(topicId).select("path");
     if (!topic) return null;
 
-    const topicsToCheck = [...topic.path, topic._id];
+    // const topicsToCheck = [...topic.path, topic._id]; w momencie dziedziczenia
+    const topicsToCheck = [topic._id];
 
     const result = await Topic.aggregate([
       {
@@ -78,7 +79,8 @@ class TopicRepository {
     const topic = await Topic.findById(topicId).select("path");
     if (!topic) return false;
 
-    const topicsToCheck = [...topic.path, topic._id];
+    // const topicsToCheck = [...topic.path, topic._id]; w momencie dziedziczenia
+    const topicsToCheck = [topic._id]; 
 
     return Boolean(
       await Topic.exists({

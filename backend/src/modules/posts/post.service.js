@@ -38,6 +38,16 @@ class PostService {
     return post;
   }
 
+  async getPostById(postId) {
+    const post = await postRepository.findById(postId);
+
+    if (!post) {
+      throw ApiError.notFound("Post not found");
+    }
+
+    return post
+  }
+
   async getPostsByTopic(topicId, { page = 0, limit = 20, isAdmin = false } = {}) {
     const topic = await topicRepository.findById(topicId);
     if (!topic) {

@@ -66,6 +66,15 @@
       <p v-else class="info">
         Brak użytkowników
       </p>
+
+      <hr class="divider" />
+      <section class="tags-section">
+        <h3 class="section-title">Tagi</h3>
+
+        <CreateTag @created="tagListRef.load()" />
+
+        <TagList ref="tagListRef" />
+      </section>
     </div>
   </div>
 </template>
@@ -79,11 +88,15 @@ import {
   setAdmin,
   setAllowed
 } from "@/services/users";
+import CreateTag from "@/components/Tag/CreateTag.vue";
+import TagList from "@/components/Tag/TagList.vue";
 
 const users = ref([]);
 const infoMessage = ref("");
 const currentLoader = ref(fetchAllUsers);
 const current = ref("all");
+
+const tagListRef = ref(null);
 
 const reload = async () => {
   infoMessage.value = "";
@@ -156,11 +169,14 @@ onMounted(loadAll);
   animation: enter 0.6s ease;
 }
 
+/* ===== TITLE ===== */
+
 h2 {
   text-align: center;
   margin-bottom: 24px;
 }
 
+/* ===== FILTERS ===== */
 
 .filters {
   display: flex;
@@ -180,6 +196,7 @@ h2 {
   border-color: var(--accent);
 }
 
+/* ===== USERS ===== */
 
 .user-list {
   list-style: none;
@@ -203,7 +220,6 @@ h2 {
   font-weight: 500;
   word-break: break-all;
 }
-
 
 .actions {
   display: flex;
@@ -237,13 +253,41 @@ h2 {
   cursor: not-allowed;
 }
 
-
 .info {
   margin-top: 24px;
   text-align: center;
   color: var(--text-muted);
 }
 
+/* ===== TAGS SECTION ===== */
+
+.divider {
+  margin: 40px 0 28px;
+  border: none;
+  border-top: 1px solid var(--border-soft);
+}
+
+.tags-section {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow-soft);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+}
+
+/* ===== ANIMATION ===== */
 
 @keyframes enter {
   from {
@@ -256,6 +300,7 @@ h2 {
   }
 }
 
+/* ===== MOBILE ===== */
 
 @media (max-width: 600px) {
   .user-row {
@@ -267,5 +312,10 @@ h2 {
   .actions {
     align-self: flex-end;
   }
+
+  .tags-section {
+    padding: 16px;
+  }
 }
+
 </style>

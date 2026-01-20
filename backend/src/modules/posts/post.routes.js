@@ -21,6 +21,11 @@ router.get(
   postController.getByTopic
 );
 
+router.get("/posts/:postId", 
+  authRequired,
+  postController.getPostById
+);
+
 router.post(
   "/posts/:postId/like",
   authRequired,

@@ -9,7 +9,8 @@ class PostRepository {
   }
 
   async findById(postId) {
-    return Post.findById(postId);
+    return Post.findById(postId)
+      .populate("topic", "name");
   }
 
   async findByTopic(topicId, { page = 0, limit = 20, isAdmin = false} = {}) {
@@ -19,6 +20,7 @@ class PostRepository {
     };
 
     return Post.find(query)
+      .populate("topic", "name")
       .sort({ createdAt: -1 })
       .skip(page * limit)
       .limit(limit)

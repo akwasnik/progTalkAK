@@ -1,5 +1,8 @@
 import api from "@/services/api";
 
+export const fetchPostById = async (postId) => 
+  await api.get(`/api/posts/${postId}`).then(res => res.data);
+
 export const fetchPostsByTopic = (topicId, { page = 0, limit = 20 } = {}) =>
   api
     .get(`/api/topics/${topicId}/posts`, {

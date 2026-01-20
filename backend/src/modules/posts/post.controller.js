@@ -22,6 +22,16 @@ class PostController {
       next(err);
     }
   }
+  
+  async getPostById(req, res, next) {
+    try {
+      const { postId } = req.params;
+      const post = await postService.getPostById(postId);
+      res.json(post);
+    } catch (err) {
+      next(err);
+    }
+  }
 
   async getByTopic(req, res, next) {
     try {

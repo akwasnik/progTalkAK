@@ -68,12 +68,14 @@
           <section class="content">
             <CreatePost
               :topicId="topic._id"
+              ref="createPostRefernce"
               @created="handleRefresh"
             />
             <PostList
               :topic="topic"
               :login="login"
               :isAdmin="isAdmin"
+              @referenceAdded="createPostRefernce.loadStoredReferences()"
             />
           </section>
         </div>
@@ -134,6 +136,7 @@ const isOwner = computed(
 );
 
 const isMod = ref(false);
+const createPostRefernce = ref(null);
 
 const checkIsMod = async () => {
   const { isModerator } = await checkIsModerator(props.topic);
@@ -207,6 +210,7 @@ onUnmounted(() => {
 
 .modal {
   width: min(720px, 94%);
+  max-height: 92vh;
 
   background: var(--bg-secondary);
   border-radius: 16px;
@@ -214,7 +218,9 @@ onUnmounted(() => {
 
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .header {
@@ -305,5 +311,30 @@ onUnmounted(() => {
 .modal-leave-to {
   opacity: 0;
   transform: scale(0.92) translateY(10px);
+}
+
+/* ===== SCROLLBAR – TopicModal ===== */
+
+.modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(80, 200, 160, 0.35);
+  border-radius: 999px;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background: rgba(80, 200, 160, 0.6);
+}
+
+.modal {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80,200,160,0.5) rgba(255,255,255,0.05);
 }
 </style>

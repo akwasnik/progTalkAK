@@ -46,6 +46,19 @@
             {{ post.isDeleted ? "Ten post został usunięty." : post.content }}
           </div>
 
+          <div
+            v-if="!post.isDeleted && post.tags?.length"
+            class="post-tags"
+          >
+            <span
+              v-for="tag in post.tags"
+              :key="tag"
+              class="post-tag"
+            >
+              #{{ tag }}
+            </span>
+          </div>
+
           <span
             v-if="!post.isDeleted && post.content.length > 200"
             class="more-hint"
@@ -54,6 +67,14 @@
           </span>
 
           <footer class="post-footer">
+            <button
+              class="ref-btn"
+              title="Dodaj jako referencję"
+              @click.stop="addReference(post)"
+            >
+              ↩
+            </button>
+
             <button
               class="like-btn"
               :class="{ liked: post.likes.includes(login) }"
@@ -70,10 +91,11 @@
     <PostModal
     v-if="selectedPost"
     :post="selectedPost"
-    :topicName="topic.name"
+    :topicName="selectedPost.topic.name"
     :login="login"
     :isAdmin="isAdmin"
     @close="selectedPost = null"
+    @openReferencedPost = "openPost"
     />
 </template>
 
@@ -101,12 +123,36 @@ const page = ref(0);
 const selectedPost = ref(null);
 
 const STORAGE_KEY = (id) => `postPage:${id}`;
+const REFERENCES_KEY = "postReferences";
 
 const loadPageFromStorage = () =>
   Number(localStorage.getItem(STORAGE_KEY(props.topic._id))) || 0;
 
 const savePageToStorage = (p) =>
   localStorage.setItem(STORAGE_KEY(props.topic._id), p);
+
+const emit = defineEmits(["referenceAdded"]);
+
+const addReference = (post) => {
+  const stored = JSON.parse(
+    localStorage.getItem(REFERENCES_KEY) || "[]"
+  );
+
+  if (stored.some(r => r.id === post._id)) return;
+
+  stored.push({
+    id: post._id,
+    content: post.content.slice(0, 180)
+  });
+
+  localStorage.setItem(
+    REFERENCES_KEY,
+    JSON.stringify(stored)
+  );
+
+  emit("referenceAdded");
+};
+
 
 const loadPosts = async () => {
   posts.value = await fetchPostsByTopic(props.topic._id, {
@@ -179,19 +225,15 @@ onUnmounted(() => {
 
 <style scoped>
 .post-list {
+  margin-bottom: 1em;
   display: flex;
   flex-direction: column;
   gap: 1em;
-  max-height: 45vh;
+  max-height: 50vh;
   overflow-y: auto;
   padding-right: 6px;
 }
 
-@media (max-width: 640px) {
-  .post-list {
-    max-height: 20vh;
-  }
-}
 
 .post {
   background: var(--bg-primary);
@@ -269,6 +311,7 @@ onUnmounted(() => {
 .post-footer {
   display: flex;
   justify-content: flex-end;
+  gap: 0.5em;
 }
 
 .like-btn {
@@ -326,6 +369,47 @@ onUnmounted(() => {
 .pagination button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.ref-btn {
+  border: none;
+  background: rgba(120, 120, 255, 0.15);
+  color: #b7c0ff;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.ref-btn:hover {
+  background: rgba(120, 120, 255, 0.3);
+  transform: scale(1.05);
+}
+
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-left: 1em;
+  margin-bottom: 6px;
+}
+
+.post-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(36, 92, 73, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(80, 200, 160, 0.25);
+  cursor: default;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.post-tag:hover {
+  background: rgba(80, 200, 160, 0.25);
 }
 
 /* ===== SCROLLBAR – WebKit ===== */

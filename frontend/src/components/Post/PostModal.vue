@@ -11,6 +11,20 @@
 
           </header>
 
+          <!-- tagi -->
+          <div
+            v-if="!post.isDeleted && post.tags?.length"
+            class="tags-wrapper"
+          >
+            <span
+              v-for="tag in post.tags"
+              :key="tag"
+              class="post-tag"
+            >
+              #{{ tag }}
+            </span>
+          </div>
+
           <section class="content">
             <div
               class="full-content"
@@ -19,6 +33,14 @@
           </section>
 
           <footer class="footer">
+            <button
+              v-if="post.references.length"
+              class="ref-btn"
+              @click="showReferences = true"
+            >
+              ↩ Referencje ({{ post.references.length }})
+            </button>
+
             <button
               class="like-btn"
               :class="{ liked: post.likes.includes(login) }"
@@ -32,16 +54,29 @@
               Zamknij
             </button>
           </footer>
+
         </article>
       </div>
     </Transition>
   </Teleport>
+
+  <PostReferences
+    v-if="showReferences"
+    :referenceIds="post.references"
+    :login="login"
+    :isAdmin="isAdmin"
+    @close="showReferences = false"
+    @open-post="openAnotherPost"
+  />
 </template>
 
 <script setup>
 import { toggleLikePost } from "@/services/posts";
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import { renderPostContent } from "@/services/highlight";
+import PostReferences from "@/components/Post/PostReferences.vue";
+
+const showReferences = ref(false);
 
 const renderedContent = computed(() =>
   renderPostContent(props.post.content)
@@ -66,7 +101,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close","openReferencedPost"]);
 
 const toggleLike = async () => {
   if (props.post.isDeleted) return;
@@ -80,6 +115,8 @@ const toggleLike = async () => {
         1
       );
 };
+
+const openAnotherPost = (post) => emit('openReferencedPost',post);
 </script>
 
 <style scoped>
@@ -290,4 +327,58 @@ const toggleLike = async () => {
   scrollbar-width: thin;
   scrollbar-color: rgba(80,200,160,0.5) rgba(255,255,255,0.05);
 }
+
+.tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 2em 22px;
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(80, 200, 160, 0.04);
+
+  max-height: 96px;
+  overflow-y: auto;
+  padding-right: 6px;
+
+  overscroll-behavior: contain;
+}
+
+.post-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(80, 200, 160, 0.18);
+  color: var(--accent);
+  border: 1px solid rgba(80, 200, 160, 0.35);
+  font-weight: 500;
+  user-select: none;
+}
+
+/* ===== SCROLLBAR – PostModal tags ===== */
+
+.tags-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tags-wrapper::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+}
+
+.tags-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(80, 200, 160, 0.35);
+  border-radius: 999px;
+}
+
+.tags-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(80, 200, 160, 0.6);
+}
+
+.tags-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80,200,160,0.45) rgba(255,255,255,0.05);
+}
+
+
 </style>

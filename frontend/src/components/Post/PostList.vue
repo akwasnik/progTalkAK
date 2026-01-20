@@ -67,6 +67,14 @@
       </TransitionGroup>
     </div>
   </div>
+    <PostModal
+    v-if="selectedPost"
+    :post="selectedPost"
+    :topicName="topic.name"
+    :login="login"
+    :isAdmin="isAdmin"
+    @close="selectedPost = null"
+    />
 </template>
 
 <script setup>
@@ -77,34 +85,39 @@ import {
   deletePost
 } from "@/services/posts";
 import { getSocket } from "@/services/socket";
+import PostModal from "@/components/Post/PostModal.vue";
 
 const props = defineProps({
-  topicId: String,
+  topic: {
+    type: Object,
+    required: true
+  },
   login: String,
   isAdmin: Boolean
 });
 
 const posts = ref([]);
 const page = ref(0);
+const selectedPost = ref(null);
 
 const STORAGE_KEY = (id) => `postPage:${id}`;
 
 const loadPageFromStorage = () =>
-  Number(localStorage.getItem(STORAGE_KEY(props.topicId))) || 0;
+  Number(localStorage.getItem(STORAGE_KEY(props.topic._id))) || 0;
 
 const savePageToStorage = (p) =>
-  localStorage.setItem(STORAGE_KEY(props.topicId), p);
+  localStorage.setItem(STORAGE_KEY(props.topic._id), p);
 
 const loadPosts = async () => {
-  posts.value = await fetchPostsByTopic(props.topicId, {
+  posts.value = await fetchPostsByTopic(props.topic._id, {
     page: page.value,
     limit: 20
   });
 };
 
 watch(
-  () => props.topicId,
-  () => {
+  () => props.topic._id,
+  () => { // wrazie czego można jeszcze onmounted
     page.value = loadPageFromStorage();
     loadPosts();
   },
@@ -142,7 +155,7 @@ const removePost = async (id) => {
 };
 
 const openPost = (post) => {
-  console.log("open post modal", post._id);
+  selectedPost.value = post;
 };
 
 onMounted(() => {
@@ -169,9 +182,15 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1em;
-  max-height: 55vh;
+  max-height: 45vh;
   overflow-y: auto;
   padding-right: 6px;
+}
+
+@media (max-width: 640px) {
+  .post-list {
+    max-height: 20vh;
+  }
 }
 
 .post {
@@ -307,5 +326,29 @@ onUnmounted(() => {
 .pagination button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* ===== SCROLLBAR – WebKit ===== */
+:deep(.post-list::-webkit-scrollbar) {
+  width: 8px;
+}
+
+:deep(.post-list::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+:deep(.post-list::-webkit-scrollbar-thumb) {
+  background: rgba(80, 200, 160, 0.35);
+  border-radius: 999px;
+}
+
+:deep(.post-list::-webkit-scrollbar-thumb:hover) {
+  background: rgba(80, 200, 160, 0.55);
+}
+
+/* ===== SCROLLBAR – Firefox ===== */
+:deep(.post-list) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80,200,160,0.45) transparent;
 }
 </style>

@@ -4,8 +4,10 @@
       v-model="content"
       class="post-input"
       placeholder="Napisz wiadomość..."
-      rows="4"
+      rows="4" 
     />
+
+    <!-- @keydown.enter="sendPost" -->
 
     <div class="references">
       <div class="ref-input">

@@ -35,6 +35,10 @@ app.use("/api/topics", topicRoutes);
 const postRoutes = require(path.join(SRC,"modules","posts","post.routes"));
 app.use("/api", postRoutes);
 
+// TAGS
+const tagRoutes = require(path.join(SRC,"modules","tags","tag.routes"));
+app.use("/api/tags",tagRoutes)
+
 const errorMiddleware = require(path.join(SRC,"common","errors","error-middleware"))
 app.use(errorMiddleware);
 

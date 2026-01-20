@@ -71,7 +71,7 @@
               @created="handleRefresh"
             />
             <PostList
-              :topicId="topic._id"
+              :topic="topic"
               :login="login"
               :isAdmin="isAdmin"
             />
@@ -207,12 +207,14 @@ onUnmounted(() => {
 
 .modal {
   width: min(720px, 94%);
+
   background: var(--bg-secondary);
   border-radius: 16px;
   box-shadow: var(--shadow-strong);
-  overflow: hidden;
+
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .header {

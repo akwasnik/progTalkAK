@@ -12,6 +12,7 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "lint": "eslint . --ext .js",
+    "seed": "node src/common/utils/seed.js",
     "test": "jest --watchAll=false"
   },
   "dependencies": {

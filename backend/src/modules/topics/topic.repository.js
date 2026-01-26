@@ -181,18 +181,26 @@ class TopicRepository {
   //  STATE 
 
   async setClosed(topicId, isClosed) {
-    return Topic.findByIdAndUpdate(
-      topicId,
-      { isClosed },
-      { new: true }
+    return Topic.updateMany(
+      {
+        $or: [
+          { _id: topicId },
+          { path: topicId }
+        ]
+      },
+      { isClosed }
     );
   }
 
   async setHidden(topicId, isHidden) {
-    return Topic.findByIdAndUpdate(
-      topicId,
-      { isHidden },
-      { new: true }
+    return Topic.updateMany(
+      {
+        $or: [
+          { _id: topicId },
+          { path: topicId }
+        ]
+      },
+      { isHidden }
     );
   }
 }

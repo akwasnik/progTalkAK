@@ -8,9 +8,18 @@ services:
     container_name: progtalk-backend
     restart: always
     environment:
-      MONGO_URI: mongodb://mongo:27017/progtalk
-      FRONTEND_URL: https://localhost:5173
       PORT: 3002
+      API_HOST: 0.0.0.0
+      SECRET: T444JNK3Y
+      FRONTEND_URL: https://localhost:5173
+      MONGO_URI: mongodb://mongo:27017/progtalk
+      DB_HOST: mongo
+      DB_PORT: 27017
+      DB_NAME: progtalk
+      SALT: b3a844b13ff50b99
+      ITERATIONS: 10
+      KEYLEN: 64
+      DIGEST: sha512
     depends_on:
       - mongo
     networks:
@@ -19,6 +28,7 @@ services:
       - ./backend:/app
     expose:
       - "3002"
+    command: sh -c "npm run seed && npm start"
 
   frontend:
     build:

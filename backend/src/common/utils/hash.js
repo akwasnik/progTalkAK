@@ -9,7 +9,7 @@ const genHash = (pswd) => {
 
 const cmpHash = (pswd, hash) => {
   let hashedPswd = genHash(pswd);
-  return hashedPswd == hash;
+  return hashedPswd === hash;
 };
 
 module.exports = {

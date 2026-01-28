@@ -43,8 +43,6 @@ services:
       - backend
     networks:
       - progtalk-network
-    volumes:
-      - ./frontend:/app
     expose:
       - "5173"
 

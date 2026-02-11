@@ -3,15 +3,15 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: pt-backend
     restart: always
     environment:
       PORT: 3002
       API_HOST: 0.0.0.0
       SECRET: T444JNK3Y
-      FRONTEND_URL: https://localhost:5173
+      FRONTEND_URL: https://localhost
       MONGO_URI: mongodb://mongo:27017/progtalk
       DB_HOST: mongo
       DB_PORT: 27017
@@ -24,27 +24,25 @@ services:
       - mongo
     networks:
       - progtalk-network
-    volumes:
-      - ./backend:/app
     expose:
       - "3002"
     command: sh -c "npm run seed && npm start"
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: pt-frontend
-    restart: always
-    environment:
-      VITE_API_URL: /api
-      VITE_SOCKET_URL: ""
-    depends_on:
-      - backend
-    networks:
-      - progtalk-network
-    expose:
-      - "5173"
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: pt-frontend
+  #   restart: always
+  #   environment:
+  #     VITE_API_URL: /api
+  #     VITE_SOCKET_URL: ""
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - progtalk-network
+  #   expose:
+  #     - "5173"
 
   nginx:
     image: nginx:alpine
@@ -57,7 +55,6 @@ services:
       - ./nginx/certs:/etc/nginx/certs:ro
     depends_on:
       - backend
-      - frontend
     networks:
       - progtalk-network
 

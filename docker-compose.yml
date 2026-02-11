@@ -37,8 +37,8 @@ services:
     container_name: progtalk-frontend
     restart: always
     environment:
-      VITE_API_URL: https://localhost/api
-      VITE_SOCKET_URL: https://localhost
+      VITE_API_URL: /api
+      VITE_SOCKET_URL: ""
     depends_on:
       - backend
     networks:

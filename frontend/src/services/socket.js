@@ -2,10 +2,34 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
+const isLocalhostHost = (host) =>
+  host === "localhost" || host === "127.0.0.1" || host === "::1";
+
+const resolveSocketUrl = () => {
+  const envUrl = import.meta.env.VITE_SOCKET_URL;
+
+  if (!envUrl) return typeof window !== "undefined" ? window.location.origin : undefined;
+  if (envUrl.startsWith("/")) return envUrl;
+
+  try {
+    const parsed = new URL(envUrl);
+    if (
+      typeof window !== "undefined" &&
+      !isLocalhostHost(window.location.hostname) &&
+      isLocalhostHost(parsed.hostname)
+    ) {
+      return window.location.origin;
+    }
+    return envUrl;
+  } catch {
+    return envUrl;
+  }
+};
+
 export const initSocket = (isAdmin) => {
   if (socket) return socket;
 
-  socket = io(import.meta.env.VITE_SOCKET_URL, {
+  socket = io(resolveSocketUrl(), {
     withCredentials: true
   });
 

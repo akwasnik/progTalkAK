@@ -8,6 +8,14 @@ class TopicRepository {
     return Topic.findById(id);
   }
 
+  async findAllPageable({ page = 0, limit = 20} = {}) {
+    return Topic.find()
+      .sort({ createdAt: -1 })
+      .skip(page * limit)
+      .limit(limit)
+      .lean();
+  }
+
   async findAll() {
     return Topic.find();
   }

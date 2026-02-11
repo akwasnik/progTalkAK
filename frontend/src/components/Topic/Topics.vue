@@ -1,7 +1,22 @@
 <template>
   <div class="topics">
     <h2 class="title">Tematy</h2>
+    <div class="pagination">
+      <button
+        @click="prevPage"
+        :disabled="page === 0"
+      >
+        ← Nowsze
+      </button>
 
+      <span class="page-info">
+        Strona {{ page + 1 }}
+      </span>
+
+      <button @click="nextPage">
+        Starsze →
+      </button>
+    </div>
     <transition-group
       name="topic"
       tag="ul"
@@ -96,9 +111,8 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import TopicModal from "@/components/Topic/TopicModal.vue";
-import { fetchTopics } from "@/services/topics";
 import { fetchTopic, patchToggleTopicClosed, patchToggleTopicHidden } from "@/services/topics";
-import { checkAccess } from "../../services/topics";
+import { checkAccess, fetchTopicsPageable } from "@/services/topics";
 
 const props = defineProps({
   login: {
@@ -112,10 +126,17 @@ const props = defineProps({
 });
 
 const topics = ref([]);
+const page = ref(0);
 const activeTopic = ref(null);
 
+const loadPageFromStorage = () =>
+  Number(localStorage.getItem("all")) || 0;
+
+const savePageToStorage = (p) =>
+  localStorage.setItem("all", p);
+
 const loadTopics = async () => {
-  const res = await fetchTopics();
+  const res = await fetchTopicsPageable({page: page.value, limit: 20});
   topics.value = res;
 };
 
@@ -123,6 +144,18 @@ defineExpose({
   loadTopics
 });
 
+const nextPage = () => {
+  page.value += 1;
+  savePageToStorage(page.value);
+  loadTopics();
+};
+
+const prevPage = () => {
+  if (page.value === 0) return;
+  page.value -= 1;
+  savePageToStorage(page.value);
+  loadTopics();
+};
 
 const reloadTopics = async () => {
   await loadTopics();
@@ -165,7 +198,10 @@ const toggleClosed = async (topic) => {
   await reloadTopics();
 };
 
-onMounted(loadTopics);
+onMounted(() => {
+  page.value = loadPageFromStorage();
+  loadTopics()
+});
 </script>
 
 <style scoped>
@@ -232,6 +268,24 @@ onMounted(loadTopics);
   border-style: dashed;
 }
 
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 .topic-header {
   display: flex;

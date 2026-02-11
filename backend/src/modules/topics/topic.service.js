@@ -16,6 +16,10 @@ class TopicService {
     return topic;
   }
 
+  async getAllPageable({ page = 0, limit = 20} = {}) {
+    return topicRepository.findAllPageable({ page, limit });
+  }
+
   async getAll() {
     return topicRepository.findAll();
   }

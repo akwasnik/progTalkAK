@@ -3,6 +3,12 @@ import api from "@/services/api";
 export const fetchTopics = () =>
   api.get("/topics").then(res => res.data);
 
+export const fetchTopicsPageable = ({ page = 0, limit = 20 } = {}) =>
+  api.get(`/topics`, {
+      params: { page, limit }
+    })
+    .then(res => res.data);
+
 export const fetchTopic = (topicId) =>
   api.get(`/topics/${topicId}`).then(res => res.data);
 

@@ -10,7 +10,7 @@ const authRequired = require(path.join(SRC, "common", "middleware", "authRequire
 const router = Router();
 
 
-router.get("/", authRequired, topicController.getAll);
+router.get("/", authRequired, topicController.getAllPageable);
 
 router.get("/:id", authRequired, topicController.getById);
 

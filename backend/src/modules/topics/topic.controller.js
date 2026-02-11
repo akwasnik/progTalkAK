@@ -15,6 +15,18 @@ class TopicController {
     }
   }
 
+  async getAllPageable(req, res, next) {
+    try {
+      const page = Number(req.query.page) || 0;
+      const limit = Number(req.query.limit) || 20;
+      const topics = await topicService.getAllPageable({page,limit});
+      res.json(topics);
+    } catch (err) {
+      next(err);
+    }
+  }
+        
+
   async getById(req, res, next) {
     try {
       const topic = await topicService.getById(req.params.id);

@@ -498,7 +498,7 @@ async function createPosts(topics, users) {
   let totalCreated = 0;
   for (const [key, topic] of topicEntries) {
     const pool = postsByCategory[key] || defaultPosts;
-    const targetCount = 40 + (key.length % 21);  // 40-60 per topic
+    const targetCount = 40 + (key.length % 21);
 
     for (let i = 0; i < targetCount; i++) {
       const user = users[i % users.length];

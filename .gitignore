@@ -5,6 +5,9 @@
 # Node modules
 node_modules/
 
+#lock
+package-lock.json
+
 # Logs
 logs/
 *.log

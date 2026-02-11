@@ -297,7 +297,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 1em;
 
-  padding: 22px;
+  padding: 2px 10px;
   min-height: 220px;
   font-style: italic;
 }

@@ -165,8 +165,11 @@ const sendPost = async () => {
 
 <style scoped>
 .create-post {
+  padding: 1em;
   display: flex;
   flex-direction: column;
+  background: #0f162c;
+  border-radius: 2%;
   gap: 14px;
 }
 

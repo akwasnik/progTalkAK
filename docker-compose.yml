@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: progtalk-backend
+    container_name: pt-backend
     restart: always
     environment:
       PORT: 3002
@@ -34,7 +34,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: progtalk-frontend
+    container_name: pt-frontend
     restart: always
     environment:
       VITE_API_URL: /api
@@ -48,7 +48,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: progtalk-nginx
+    container_name: pt-nginx
     restart: always
     ports:
       - "443:443"
@@ -63,7 +63,7 @@ services:
 
   mongo:
     image: mongo
-    container_name: progtalk-mongo
+    container_name: pt-mongo
     restart: always
     ports:
       - "27017:27017"

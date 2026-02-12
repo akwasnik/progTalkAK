@@ -70,7 +70,8 @@ class UserService {
     async setAllowed(id, isAllowed) {
         const user = await userRepository.allowUser(id, isAllowed);
         if (!user) throw ApiError.notFound("User not found");
-        await postRepository.setLikesValidityByUser(user.login, isAllowed);
+        const postIds = await postRepository.findPostIdsLikedByUser(user.login); // to byloby zastąpione przez user.likedPosts
+        await postRepository.setLikesValidityByUser(postIds,user.login,isAllowed);
         emitToAdmins("user-approved", {
             message: (isAllowed) ? `User ${user.login} has been approved` : `User ${user.login} has been disapproved`
         });

@@ -40,6 +40,13 @@ class PostRepository {
     return Post.countDocuments(query);
   }
 
+  async findPostIdsLikedByUser(login) {
+    const posts = await Post.find({ "likes.userLogin": login })
+      .select("_id")
+
+    return posts.map((post) => post._id);
+  }
+
   async hasUserLiked(postId, login) {
     return Post.exists({
       _id: postId,
@@ -61,9 +68,9 @@ class PostRepository {
     );
   }
 
-  async setLikesValidityByUser(login, isValid) {
+  async setLikesValidityByUser(postIds, login, isValid) {
     return Post.updateMany(
-      { "likes.userLogin": login },
+      { _id: { $in: postIds }, "likes.userLogin": login },
       { $set: { "likes.$[like].isValid": isValid } },
       { arrayFilters: [{ "like.userLogin": login }] }
     );

@@ -43,21 +43,29 @@ class PostRepository {
   async hasUserLiked(postId, login) {
     return Post.exists({
       _id: postId,
-      likes: login
+      "likes.userLogin": login
     });
   }
 
   async addLike(postId, login) {
     return Post.updateOne(
-      { _id: postId },
-      { $addToSet: { likes: login } }
+      { _id: postId, "likes.userLogin": { $ne: login } },
+      { $addToSet: { likes: { userLogin: login, isValid: true } } }
     );
   }
 
   async removeLike(postId, login) {
     return Post.updateOne(
       { _id: postId },
-      { $pull: { likes: login } }
+      { $pull: { likes: { userLogin: login } } }
+    );
+  }
+
+  async setLikesValidityByUser(login, isValid) {
+    return Post.updateMany(
+      { "likes.userLogin": login },
+      { $set: { "likes.$[like].isValid": isValid } },
+      { arrayFilters: [{ "like.userLogin": login }] }
     );
   }
 

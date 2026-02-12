@@ -34,10 +34,20 @@ const PostSchema = new mongoose.Schema(
       }
     ],
 
-    likes: {
-      type: [String],
-      default: []
-    },
+    likes: [
+      {
+        userLogin: {
+          type: String,
+          required: true,
+          index: true
+        },
+        isValid: {
+          type: Boolean,
+          default: true,
+          index: true
+        }
+      }
+    ],
 
     isDeleted: {
       type: Boolean,

@@ -1,0 +1,15 @@
+PORT=3002
+API_HOST=localhost
+SECRET=tajneHaxxxlo757575
+FRONTEND_URL=http://localhost:5173
+
+crypto:
+SALT=Z7e1bF9xJ3wQ2mR8p0KXyA
+ITERATIONS=310000
+KEYLEN=64
+DIGEST=sha512
+
+db:
+DB_HOST=localhost
+DB_PORT=27017
+DB_NAME=progtalk
